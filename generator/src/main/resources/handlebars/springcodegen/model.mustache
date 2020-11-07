@@ -1,0 +1,18 @@
+package {{package}};
+
+{{#imports}}import {{import}};
+{{/imports}}
+import java.io.Serializable;
+import lombok.*;
+import com.fasterxml.jackson.annotation.*;
+
+{{#models}}
+    {{#model}}
+        {{#isEnum}}
+            {{>enumOuterClass}}
+        {{/isEnum}}
+        {{^isEnum}}
+            {{>pojo}}
+        {{/isEnum}}
+    {{/model}}
+{{/models}}

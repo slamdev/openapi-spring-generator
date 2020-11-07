@@ -1,0 +1,88 @@
+plugins {
+    id 'base'
+    id 'idea'
+}
+
+allprojects {
+    group 'com.github.slamdev.openapispringgenerator'
+}
+
+subprojects {
+    plugins.withId('java') {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+
+        compileJava {
+            options.encoding = 'UTF-8'
+            options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation' << '-Werror'
+        }
+        compileTestJava {
+            options.encoding = 'UTF-8'
+            options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation' << '-Werror'
+        }
+        repositories {
+            jcenter()
+        }
+    }
+
+    plugins.withId('pmd') {
+        pmd {
+            toolVersion = '6.25.0'
+            ignoreFailures = false
+            consoleOutput = false
+        }
+        tasks.withType(Pmd) {
+            if (name == 'pmdMain') {
+                source = 'src/main/java'
+                ruleSetFiles = files("../../etc/java-support/lint/pmd/ruleSetMain.xml")
+                ruleSets = []
+            } else {
+                ruleSetFiles = files("../../etc/java-support/lint/pmd/ruleSetTest.xml")
+                ruleSets = []
+            }
+            exclude '**/api/**'
+        }
+    }
+
+    plugins.withId('checkstyle') {
+        checkstyle {
+            toolVersion = '8.34'
+            ignoreFailures = false
+            showViolations = false
+        }
+        tasks.withType(Checkstyle) {
+            if (name == 'checkstyleMain') {
+                source = 'src/main/java'
+                configFile = file("../../etc/java-support/lint/checkstyle/checkstyleMain.xml")
+            } else {
+                configFile = file("../../etc/java-support/lint/checkstyle/checkstyleTest.xml")
+            }
+            exclude '**/api/**'
+        }
+        dependencies {
+            checkstyle 'com.thomasjensen.checkstyle.addons:checkstyle-addons:6.0.1'
+            checkstyle 'com.github.sevntu-checkstyle:sevntu-checks:1.37.1'
+        }
+    }
+    plugins.withId('spotbugs') {
+        spotbugs {
+            toolVersion = '4.0.6'
+            ignoreFailures = false
+            effort = 'max'
+            reportLevel = 'low'
+        }
+        tasks.withType(SpotBugs) {
+            if (name == 'spotbugsMain') {
+                excludeFilter = file("${rootProject.projectDir}/config/findbugs/excludeMain.xml")
+            } else {
+                excludeFilter = file("${rootProject.projectDir}/config/findbugs/excludeTest.xml")
+            }
+            reports {
+                xml.enabled = false
+                html.enabled = true
+            }
+        }
+    }
+
+
+}

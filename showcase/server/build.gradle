@@ -1,0 +1,25 @@
+buildscript {
+    dependencies {
+        classpath project(':generator')
+        classpath project(':plugin')
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.3.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+//    id 'com.github.slamdev.openapi-spring-generator'
+}
+
+apply plugin: 'com.github.slamdev.openapi-spring-generator'
+
+openapi {
+    server fileTree('src/main/resources/openapi') { include('*.yaml') }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+}
