@@ -24,6 +24,7 @@ public class OpenApiSpringGeneratorPluginTest {
     @Test
     public void should_run_task() throws IOException {
         task.client(file("spec.yaml"));
+        task.setDestinationDir(new File("build/output"));
         task.generate();
     }
 
