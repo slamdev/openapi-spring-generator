@@ -4,4 +4,5 @@ plugins {
 
 dependencies {
     api project(':generator')
+    testImplementation 'junit:junit:4.13.1'
 }
