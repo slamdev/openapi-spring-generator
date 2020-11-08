@@ -15,6 +15,7 @@ apply plugin: 'com.github.slamdev.openapi-spring-generator'
 
 openapi {
     client file('../server/src/main/resources/openapi/petstore-expanded.yaml')
+    client file('../server/src/main/resources/openapi/upload-download.yaml')
 }
 
 dependencies {

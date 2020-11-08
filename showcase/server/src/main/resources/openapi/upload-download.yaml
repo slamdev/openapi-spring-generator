@@ -1,0 +1,88 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Upload & Download examples
+x-package-name: com.github.slamdev.openapispringgenerator.showcase.server.api
+x-api-name-prefix: UploadDownload
+x-path-variable-name: server.url
+servers:
+  - url: /api/files
+paths:
+  /:
+    get:
+      operationId: downloadOne
+      responses:
+        '200':
+          description: OK
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+    post:
+      operationId: uploadOne
+      requestBody:
+        required: true
+        content:
+          image/png:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+  /multipart:
+    post:
+      operationId: uploadMultipart
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: integer
+                userId:
+                  type: integer
+                fileName:
+                  type: string
+                  format: binary
+            encoding:
+              fileName:
+                contentType: image/png, image/jpeg
+      responses:
+        '200':
+          description: OK
+  /multiple:
+    get:
+      operationId: downloadMultiple
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  avatar:
+                    type: string
+                    format: byte
+                    description: Base64-encoded contents of the avatar image
+    post:
+      operationId: uploadMultiple
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filenames:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: OK
