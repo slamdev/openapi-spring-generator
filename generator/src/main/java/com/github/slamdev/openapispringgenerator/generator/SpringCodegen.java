@@ -11,6 +11,8 @@ public class SpringCodegen extends AbstractJavaCodegen {
 
     public SpringCodegen() {
         super();
+        projectFolder = "";
+        sourceFolder = "";
         supportedLibraries.put("server", "");
         supportedLibraries.put("client", "");
         additionalProperties.put(DATE_LIBRARY, "java8");
@@ -88,6 +90,18 @@ public class SpringCodegen extends AbstractJavaCodegen {
     }
 
     @Override
+    protected void postProcessAllCodegenModels(Map<String, CodegenModel> allModels) {
+        super.postProcessAllCodegenModels(allModels);
+        allModels.forEach((k, model) -> {
+            if (model.getParent() != null || (model.getChildren() != null && !model.getChildren().isEmpty())) {
+                model.getVendorExtensions().put("x-inheritance", true);
+            } else {
+                model.getVendorExtensions().put("x-inheritance", false);
+            }
+        });
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public Map<String, Object> postProcessOperations(Map<String, Object> objs) {
         objs = super.postProcessOperations(objs);
@@ -98,7 +112,7 @@ public class SpringCodegen extends AbstractJavaCodegen {
                 if (vendorExtensions.containsKey("x-security-role")) {
                     operation.vendorExtensions.putIfAbsent("x-security-role", vendorExtensions.get("x-security-role"));
                 }
-                if ("Void".equals(operation.returnType)) {
+                if (operation.returnType == null || "Void".equals(operation.returnType)) {
                     operation.vendorExtensions.putIfAbsent("x-void", true);
                 }
                 List<CodegenResponse> responses = operation.responses;

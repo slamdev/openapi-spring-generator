@@ -1,7 +1,9 @@
 {{#discriminator}}{{>typeInfoAnnotation}}{{/discriminator}}
 
 @Data
-@Builder
+{{#vendorExtensions.x-inheritance}}@SuperBuilder{{/vendorExtensions.x-inheritance}}
+{{^vendorExtensions.x-inheritance}}@Builder{{/vendorExtensions.x-inheritance}}
+{{#parent}}@EqualsAndHashCode(callSuper=true){{/parent}}
 @AllArgsConstructor
 public class {{classname}} {{#parent}}extends {{{parent}}}{{/parent}} implements Serializable {{#interfaceModels}}, {{classname}}{{^@last}}, {{/@last}}{{#@last}} {{/@last}}{{/interfaceModels}} {
 {{#serializableModel}}

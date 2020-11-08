@@ -10,7 +10,7 @@ public class GeneratorTest {
     public void should_generate() {
         Generator g = new Generator();
         g.generate(
-                Paths.get("showcase/server/src/main/resources/openapi/petstore-expanded.yaml"),
+                Paths.get("../showcase/server/src/main/resources/openapi/petstore-expanded.yaml"),
                 Generator.Type.SERVER,
                 Paths.get("build/output")
         );
