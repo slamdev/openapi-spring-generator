@@ -9,11 +9,16 @@ import com.fasterxml.jackson.annotation.*;
 
 {{#models}}
     {{#model}}
-        {{#isEnum}}
-            {{>enumOuterClass}}
-        {{/isEnum}}
-        {{^isEnum}}
-            {{>pojo}}
-        {{/isEnum}}
+        {{#isComposedModel}}
+            {{>interface}}
+        {{/isComposedModel}}
+        {{^isComposedModel}}
+            {{#isEnum}}
+                {{>enumOuterClass}}
+            {{/isEnum}}
+            {{^isEnum}}
+                {{>pojo}}
+            {{/isEnum}}
+        {{/isComposedModel}}
     {{/model}}
 {{/models}}

@@ -97,14 +97,10 @@ public class OpenApiTask extends DefaultTask {
 
     @TaskAction
     public void generate() throws IOException {
-        if (Files.exists(destinationDir.toPath())) {
-            Files.walk(destinationDir.toPath())
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
-        }
-
         Path tempDir = getTemporaryDir().toPath();
+        clearDir(tempDir);
+
+        clearDir(destinationDir.toPath());
 
         ProgressLogger progressLogger = progressLoggerFactory.newOperation(OpenApiTask.class);
         progressLogger.start("OpenApi code generation", null);
@@ -131,6 +127,15 @@ public class OpenApiTask extends DefaultTask {
             }
         } finally {
             progressLogger.completed();
+        }
+    }
+
+    private void clearDir(Path dir) throws IOException {
+        if (Files.exists(dir)) {
+            Files.walk(dir)
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
         }
     }
 

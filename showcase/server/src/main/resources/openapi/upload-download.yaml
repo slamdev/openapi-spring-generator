@@ -38,15 +38,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                orderId:
-                  type: integer
-                userId:
-                  type: integer
-                fileName:
-                  type: string
-                  format: binary
+              $ref: '#/components/schemas/UploadMultipart'
             encoding:
               fileName:
                 contentType: image/png, image/jpeg
@@ -62,27 +54,43 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  username:
-                    type: string
-                  avatar:
-                    type: string
-                    format: byte
-                    description: Base64-encoded contents of the avatar image
+                $ref: '#/components/schemas/DownloadMulti'
     post:
       operationId: uploadMultiple
       requestBody:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                filenames:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
+              $ref: '#/components/schemas/UploadMulti'
       responses:
         '200':
           description: OK
+components:
+  schemas:
+    UploadMultipart:
+      type: object
+      properties:
+        orderId:
+          type: integer
+        userId:
+          type: integer
+        fileName:
+          type: string
+          format: binary
+    DownloadMulti:
+      type: object
+      properties:
+        username:
+          type: string
+        avatar:
+          type: string
+          format: byte
+          description: Base64-encoded contents of the avatar image
+    UploadMulti:
+      type: object
+      properties:
+        filenames:
+          type: array
+          items:
+            type: string
+            format: binary
