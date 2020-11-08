@@ -26,10 +26,6 @@ public class Generator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Generator.class);
 
-    public void generate(List<Path> specFiles, Type type, Path outputDir) {
-        specFiles.forEach(specFile -> generate(specFile, type, outputDir));
-    }
-
     public void generate(Path specFie, Type type, Path outputDir) {
         LOGGER.info("generating {} code for {} in {}", type, specFie, outputDir);
 

@@ -117,8 +117,9 @@ public class OpenApiTask extends DefaultTask {
                     return;
                 }
                 progressLogger.progress(progressFormatter.getProgress());
-                List<Path> specFiles = files.stream().map(File::toPath).collect(Collectors.toList());
-                new Generator().generate(specFiles, Generator.Type.SERVER, tempDir.toPath());
+                files.stream()
+                        .map(File::toPath)
+                        .forEach(specFile -> new Generator().generate(specFile, Generator.Type.SERVER, tempDir.toPath()));
                 progressFormatter.increment();
             });
             clients.forEach(files -> {
@@ -126,8 +127,9 @@ public class OpenApiTask extends DefaultTask {
                     return;
                 }
                 progressLogger.progress(progressFormatter.getProgress());
-                List<Path> specFiles = files.stream().map(File::toPath).collect(Collectors.toList());
-                new Generator().generate(specFiles, Generator.Type.CLIENT, tempDir.toPath());
+                files.stream()
+                        .map(File::toPath)
+                        .forEach(specFile -> new Generator().generate(specFile, Generator.Type.CLIENT, tempDir.toPath()));
                 progressFormatter.increment();
             });
             FileTree javaTree = (FileTree) getProject().fileTree(tempDir).include("**/*.java");

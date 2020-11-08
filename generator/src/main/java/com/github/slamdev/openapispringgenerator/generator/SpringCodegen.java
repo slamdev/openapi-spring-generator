@@ -23,11 +23,9 @@ public class SpringCodegen extends AbstractJavaCodegen {
     public void processOpts() {
         super.processOpts();
         apiTemplateFiles.put("api.mustache", ".java");
-//        if (CodegenType.SERVER.equals(getTag())) {
-//            apiTemplateFiles.put("api.mustache", ".java");
-//        } else if (CodegenType.CLIENT.equals(getTag())) {
-//            apiTemplateFiles.put("api.mustache", ".java");
-//        }
+        if (CodegenType.CLIENT.equals(getTag())) {
+            supportingFiles.add(new SupportingFile("spring.factories.mustache", "META-INF", "spring.factories"));
+        }
         modelTemplateFiles.put("model.mustache", ".java");
         modelDocTemplateFiles.remove("model_doc.mustache");
         apiDocTemplateFiles.remove("api_doc.mustache");
@@ -114,6 +112,9 @@ public class SpringCodegen extends AbstractJavaCodegen {
                 }
                 if (operation.returnType == null || "Void".equals(operation.returnType)) {
                     operation.vendorExtensions.putIfAbsent("x-void", true);
+                }
+                if (vendorExtensions.containsKey("x-path-variable-name")) {
+                    operation.vendorExtensions.putIfAbsent("x-path-variable-name", vendorExtensions.get("x-path-variable-name"));
                 }
                 List<CodegenResponse> responses = operation.responses;
                 if (responses != null) {
