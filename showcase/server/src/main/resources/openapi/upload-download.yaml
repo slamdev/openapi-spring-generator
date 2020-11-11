@@ -5,6 +5,7 @@ info:
 x-package-name: com.github.slamdev.openapispringgenerator.showcase.server.api
 x-api-name-prefix: UploadDownload
 x-path-variable-name: server.url
+#x-security-role: ROLE_USER
 servers:
   - url: /api/files
 paths:

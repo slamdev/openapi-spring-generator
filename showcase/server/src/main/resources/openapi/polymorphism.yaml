@@ -1,0 +1,49 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Polymorphism examples
+x-package-name: com.github.slamdev.openapispringgenerator.showcase.server.api
+x-api-name-prefix: Polymorphism
+x-path-variable-name: server.url
+servers:
+  - url: /api/polymorphism
+paths:
+  /allof:
+    post:
+      operationId: allof
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HomePet'
+      responses:
+        200:
+          description: OK
+components:
+  schemas:
+    HomePet:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - Dog
+            - Cat
+      discriminator:
+        propertyName: type
+    Dog:
+      allOf:
+        - $ref: '#/components/schemas/HomePet'
+        - type: object
+          properties:
+            bark:
+              type: boolean
+    Cat:
+      allOf:
+        - $ref: '#/components/schemas/HomePet'
+        - type: object
+          properties:
+            milk:
+              type: boolean
