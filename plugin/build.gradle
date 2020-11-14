@@ -10,6 +10,8 @@ plugins {
 gradlePlugin {
     plugins.register 'openapi-spring-generator', {
         id = 'com.github.slamdev.openapi-spring-generator'
+        displayName = 'openapi-spring-generator'
+        description = 'OpenAPI Generator for Java Spring framework'
         implementationClass = 'com.github.slamdev.openapispringgenerator.plugin.OpenApiSpringGeneratorPlugin'
     }
 }
