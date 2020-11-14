@@ -1,13 +1,16 @@
 package com.github.slamdev.openapispringgenerator.generator;
 
 import io.swagger.codegen.v3.*;
+import io.swagger.codegen.v3.generators.features.OptionalFeatures;
 import io.swagger.codegen.v3.generators.java.AbstractJavaCodegen;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class SpringCodegen extends AbstractJavaCodegen {
+public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatures {
+
+    private boolean useOptional = false;
 
     public SpringCodegen() {
         super();
@@ -34,6 +37,12 @@ public class SpringCodegen extends AbstractJavaCodegen {
         typeMapping.put("file", "Resource");
         typeMapping.put("binary", "Resource");
         importMapping.put("Resource", "org.springframework.core.io.Resource");
+        typeMapping.put("DateTime", "Instant");
+        importMapping.put("Instant", "java.time.Instant");
+        if (additionalProperties.containsKey(OptionalFeatures.USE_OPTIONAL)) {
+            setUseOptional(convertPropertyToBoolean(OptionalFeatures.USE_OPTIONAL));
+            writePropertyBack(USE_OPTIONAL, useOptional);
+        }
     }
 
     @Override
@@ -59,6 +68,11 @@ public class SpringCodegen extends AbstractJavaCodegen {
             return vendorExtensions.get("x-package-name").toString();
         }
         return apiPackage;
+    }
+
+    @Override
+    public String toEnumName(CodegenProperty property) {
+        return sanitizeName(camelize(property.name));
     }
 
     @Override
@@ -192,6 +206,11 @@ public class SpringCodegen extends AbstractJavaCodegen {
                 dataTypeAssigner.setReturnContainer("Set");
             }
         }
+    }
+
+    @Override
+    public void setUseOptional(boolean useOptional) {
+        this.useOptional = useOptional;
     }
 
     private interface DataTypeAssigner {

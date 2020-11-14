@@ -9,11 +9,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class UploadDownloadController implements UploadDownloadApi {
@@ -36,17 +33,19 @@ public class UploadDownloadController implements UploadDownloadApi {
     }
 
     @Override
-    public void uploadMultipart(Optional<Integer> orderId, Optional<Integer> userId, MultipartFile fileName) {
+    public void uploadMultipart(Integer orderId, Integer userId, MultipartFile fileName) {
         LOGGER.info("uploadMultipart: {}", fileName);
     }
 
     @Override
-    public void uploadMultiple(Optional<List<MultipartFile>> filenames) {
+//    public void uploadMultiple(List<MultipartFile> filenames) {
+    public void uploadMultiple(List<Resource> filenames) {
         LOGGER.info("uploadMultiple: {}", filenames);
     }
 
     @Override
-    public void uploadOne(byte[] body) {
-            LOGGER.info("uploadOne: {}", body);
+//    public void uploadOne(byte[] body) {
+    public void uploadOne(MultipartFile body) {
+        LOGGER.info("uploadOne: {}", body);
     }
 }

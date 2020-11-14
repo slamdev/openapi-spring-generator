@@ -1,5 +1,20 @@
 plugins {
     id 'java-gradle-plugin'
+    id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '0.12.0'
+}
+
+gradlePlugin {
+    plugins.register 'openapi-spring-generator', {
+        id = 'com.github.slamdev.openapi-spring-generator'
+        implementationClass = 'com.github.slamdev.openapispringgenerator.plugin.OpenApiSpringGeneratorPlugin'
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/slamdev/openapi-spring-generator'
+    vcsUrl = 'https://github.com/slamdev/openapi-spring-generator.git'
+    tags = ['openapi', 'swagger', 'spring']
 }
 
 dependencies {

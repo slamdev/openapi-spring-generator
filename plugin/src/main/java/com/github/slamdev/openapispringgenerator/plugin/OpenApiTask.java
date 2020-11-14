@@ -43,6 +43,8 @@ public class OpenApiTask extends DefaultTask {
         }
     }
 
+    private boolean useOptional = true;
+
     private final List<Spec> specs = new ArrayList<>();
 
     private final ProgressLoggerFactory progressLoggerFactory;
@@ -85,6 +87,15 @@ public class OpenApiTask extends DefaultTask {
                 .forEach(specs::add);
     }
 
+    @Input
+    public boolean isUseOptional() {
+        return useOptional;
+    }
+
+    public void setUseOptional(boolean useOptional) {
+        this.useOptional = useOptional;
+    }
+
     @InputFiles
     @SkipWhenEmpty
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -108,7 +119,7 @@ public class OpenApiTask extends DefaultTask {
             PercentageProgressFormatter progressFormatter = new PercentageProgressFormatter("Generating", specs.size());
             for (Spec spec : specs) {
                 progressLogger.progress(progressFormatter.getProgress());
-                new Generator().generate(spec.getFile(), spec.getType(), tempDir);
+                new Generator().generate(spec.getFile(), spec.getType(), tempDir, useOptional);
 
                 FileTree javaTree = (FileTree) getProject().fileTree(tempDir).include("**/*.java");
                 move(javaTree, "java", (src, dest) -> {

@@ -103,7 +103,7 @@ import org.springframework.util.StringUtils;
 
     {{#operation}}
         {{#contents}}
-            public ResponseEntity<{{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Void{{/returnType}}> {{operationId}}Response(
+            public ResponseEntity<{{>returnTypes}}> {{operationId}}Response(
             {{#parameters}}{{{dataType}}} {{paramName}}{{#hasMore}}, {{/hasMore}}{{/parameters}}
             ) {
                 Map<String, Object> _uriVariables = new HashMap<>();
@@ -143,10 +143,10 @@ import org.springframework.util.StringUtils;
                 HttpEntity<Object> _entity = new HttpEntity<>(_form.isEmpty() ? _body : _form, _headers);
 
                 {{#returnContainer}}
-                ParameterizedTypeReference<{{{returnType}}}> _responseType = new ParameterizedTypeReference<{{{returnType}}}>() {};
+                ParameterizedTypeReference<{{>returnTypes}}> _responseType = new ParameterizedTypeReference<{{>returnTypes}}>() {};
                 {{/returnContainer}}
                 {{^returnContainer}}
-                Class<{{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Void{{/returnType}}> _responseType = {{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Void{{/returnType}}.class;
+                Class<{{>returnTypes}}> _responseType = {{>returnTypes}}.class;
                 {{/returnContainer}}
 
                 String _url = "{{{path}}}{{#hasQueryParams}}?{{/hasQueryParams}}{{#queryParams}}{{baseName}}={{=<% %>=}}{<%paramName%>}<%={{ }}=%>{{#hasMore}}&{{/hasMore}}{{/queryParams}}";
@@ -154,11 +154,11 @@ import org.springframework.util.StringUtils;
                 return restTemplate.exchange(expand(_url, _uriVariables), HttpMethod.{{httpMethod}}, _entity, _responseType);
             }
 
-            public {{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}void{{/returnType}} {{operationId}}(
+            public {{#vendorExtensions.x-void}}void{{/vendorExtensions.x-void}}{{^vendorExtensions.x-void}}{{>returnTypes}}{{/vendorExtensions.x-void}} {{operationId}}(
                 {{#parameters}}{{{dataType}}} {{paramName}}{{#hasMore}}, {{/hasMore}}{{/parameters}}
             ) {
-                ResponseEntity<{{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Void{{/returnType}}> response = {{operationId}}Response({{#parameters}}{{paramName}}{{#hasMore}}, {{/hasMore}}{{/parameters}});
-                {{#returnType}}return response.getBody();{{/returnType}}
+                ResponseEntity<{{>returnTypes}}> response = {{operationId}}Response({{#parameters}}{{paramName}}{{#hasMore}}, {{/hasMore}}{{/parameters}});
+                {{^vendorExtensions.x-void}}return response.getBody();{{/vendorExtensions.x-void}}
             }
         {{/contents}}
     {{/operation}}

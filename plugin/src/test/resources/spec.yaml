@@ -1,15 +1,37 @@
 openapi: "3.0.0"
 info:
   version: 1.0.0
-  title: Swagger Petstore
+  title: Testing
+x-package-name: com.github.slamdev.openapispringgenerator.plugin.api
+x-api-name-prefix: Testing
+x-path-variable-name: server.url
+x-security-role: ROLE_USER
+servers:
+  - url: /api/testing
 paths:
-  /test:
-    get:
-      operationId: test
+  /:
+    post:
+      operationId: exec
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/RequestDto'
       responses:
         '200':
-          description: test
+          description: OK
           content:
             application/json:
               schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResponseDto'
+components:
+  schemas:
+    RequestDto:
+      type: object
+    ResponseDto:
+      type: object

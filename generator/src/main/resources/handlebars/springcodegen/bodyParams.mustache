@@ -1,1 +1,1 @@
-{{#isBodyParam}}@RequestBody({{#required}}required = true{{/required}}{{^required}}required = false{{/required}}) {{^isBinary}}{{>optionalDataType}}{{/isBinary}}{{#isBinary}}MultipartFile{{/isBinary}} {{paramName}}{{/isBodyParam}}
+{{#isBodyParam}}@RequestBody({{#required}}required = true{{/required}}{{^required}}required = false{{/required}}) {{>optionalDataType}} {{paramName}}{{/isBodyParam}}

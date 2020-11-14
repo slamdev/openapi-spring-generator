@@ -22,9 +22,6 @@ subprojects {
         }
         repositories {
             jcenter()
-            maven {
-                url 'https://oss.sonatype.org/content/repositories/snapshots'
-            }
         }
     }
 
@@ -67,6 +64,7 @@ subprojects {
             checkstyle 'com.github.sevntu-checkstyle:sevntu-checks:1.37.1'
         }
     }
+
     plugins.withId('spotbugs') {
         spotbugs {
             toolVersion = '4.0.6'
@@ -86,6 +84,4 @@ subprojects {
             }
         }
     }
-
-
 }

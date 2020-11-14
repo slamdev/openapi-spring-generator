@@ -11,7 +11,7 @@ public class GeneratorTest {
     @Test
     public void should_generate() {
         Generator g = new Generator();
-        g.generate(Paths.get("/Users/slam/workspace/openapi-spring-generator/showcase/server/src/main/resources/openapi/upload-download.yaml"), Generator.Type.CLIENT, Paths.get("build/output"));
+        g.generate(file("spec.yaml"), Generator.Type.CLIENT, Paths.get("build/output"), true);
     }
 
     private Path file(String name) {

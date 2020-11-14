@@ -1,1 +1,1 @@
-{{#required}}{{{dataType}}}{{/required}}{{^required}}Optional<{{{dataType}}}>{{/required}}
+{{#useOptional}}{{#required}}{{{dataType}}}{{/required}}{{^required}}Optional<{{{dataType}}}>{{/required}}{{/useOptional}}{{^useOptional}}{{{dataType}}}{{/useOptional}}
