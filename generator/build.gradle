@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     // TODO upgrade to support inheritance
-    implementation ('io.swagger.codegen.v3:swagger-codegen-generators:1.0.23') {}
+    implementation 'io.swagger.codegen.v3:swagger-codegen-generators:1.0.23'
     implementation 'com.google.googlejavaformat:google-java-format:1.7'
     testImplementation 'junit:junit:4.13.1'
 }
