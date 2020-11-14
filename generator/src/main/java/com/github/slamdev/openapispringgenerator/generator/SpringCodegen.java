@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatures {
 
-    private boolean useOptional = false;
+    private boolean useOptional;
 
     public SpringCodegen() {
         super();
@@ -56,6 +56,7 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
         return camelize(name) + "Api";
     }
 
+    @Override
     public String modelPackage() {
         if (vendorExtensions.containsKey("x-package-name")) {
             return vendorExtensions.get("x-package-name").toString();
@@ -63,6 +64,7 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
         return modelPackage;
     }
 
+    @Override
     public String apiPackage() {
         if (vendorExtensions.containsKey("x-package-name")) {
             return vendorExtensions.get("x-package-name").toString();
@@ -105,10 +107,10 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
     protected void postProcessAllCodegenModels(Map<String, CodegenModel> allModels) {
         super.postProcessAllCodegenModels(allModels);
         allModels.forEach((k, model) -> {
-            if (model.getParent() != null || (model.getChildren() != null && !model.getChildren().isEmpty())) {
-                model.getVendorExtensions().put("x-inheritance", true);
-            } else {
+            if (model.getParent() == null && (model.getChildren() == null || model.getChildren().isEmpty())) {
                 model.getVendorExtensions().put("x-inheritance", false);
+            } else {
+                model.getVendorExtensions().put("x-inheritance", true);
             }
         });
     }
@@ -120,7 +122,7 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
         Map<String, Object> operations = (Map<String, Object>) objs.get("operations");
         if (operations != null) {
             List<CodegenOperation> ops = (List<CodegenOperation>) operations.get("operation");
-            for (final CodegenOperation operation : ops) {
+            for (CodegenOperation operation : ops) {
                 if (vendorExtensions.containsKey("x-security-role")) {
                     operation.vendorExtensions.putIfAbsent("x-security-role", vendorExtensions.get("x-security-role"));
                 }
@@ -185,13 +187,13 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
         if (returnType == null) {
             dataTypeAssigner.setReturnType("Void");
         } else if (returnType.startsWith("List")) {
-            int end = returnType.lastIndexOf(">");
+            int end = returnType.lastIndexOf('>');
             if (end > 0) {
                 dataTypeAssigner.setReturnType(returnType.substring("List<".length(), end).trim());
                 dataTypeAssigner.setReturnContainer("List");
             }
         } else if (returnType.startsWith("Map")) {
-            int end = returnType.lastIndexOf(">");
+            int end = returnType.lastIndexOf('>');
             if (end > 0) {
                 String mapTypes = returnType.substring("Map<".length(), end);
                 String mapKey = mapTypes.split(",")[0];
@@ -200,7 +202,7 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
                 dataTypeAssigner.setReturnContainer("Map");
             }
         } else if (returnType.startsWith("Set")) {
-            int end = returnType.lastIndexOf(">");
+            int end = returnType.lastIndexOf('>');
             if (end > 0) {
                 dataTypeAssigner.setReturnType(returnType.substring("Set<".length(), end).trim());
                 dataTypeAssigner.setReturnContainer("Set");

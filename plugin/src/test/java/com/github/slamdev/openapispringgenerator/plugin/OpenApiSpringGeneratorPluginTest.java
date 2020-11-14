@@ -29,7 +29,7 @@ public class OpenApiSpringGeneratorPluginTest {
     }
 
     private File file(String name) {
-        ClassLoader classLoader = getClass().getClassLoader();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         return new File(classLoader.getResource(name).getFile());
     }
 }

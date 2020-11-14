@@ -10,6 +10,8 @@ import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 import org.gradle.internal.progress.PercentageProgressFormatter;
 
 import javax.inject.Inject;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -24,24 +26,6 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public class OpenApiTask extends DefaultTask {
-
-    private static class Spec {
-        private final Path file;
-        private final Generator.Type type;
-
-        private Spec(Path file, Generator.Type type) {
-            this.file = file;
-            this.type = type;
-        }
-
-        public Path getFile() {
-            return file;
-        }
-
-        public Generator.Type getType() {
-            return type;
-        }
-    }
 
     private boolean useOptional = true;
 
@@ -128,7 +112,7 @@ public class OpenApiTask extends DefaultTask {
 
                 FileTree resourcesTree = (FileTree) getProject().fileTree(tempDir).exclude("**/*.java");
                 move(resourcesTree, "resources", (src, dest) -> {
-                    if (!src.getFileName().toString().equals("spring.factories")) {
+                    if (!"spring.factories".equals(src.getFileName().toString())) {
                         throw new IllegalStateException("" + dest + " already exists");
                     }
                     mergeSpringFactories(src, dest);
@@ -151,12 +135,12 @@ public class OpenApiTask extends DefaultTask {
     }
 
     private void mergeSpringFactories(Path src, Path dest) {
-        try {
+        try (BufferedReader srcReader = Files.newBufferedReader(src); BufferedReader destReader = Files.newBufferedReader(dest)) {
             Properties srcProps = new Properties();
-            srcProps.load(Files.newBufferedReader(src));
+            srcProps.load(srcReader);
 
             Properties destProps = new Properties();
-            destProps.load(Files.newBufferedReader(dest));
+            destProps.load(destReader);
 
             for (String key : srcProps.stringPropertyNames()) {
                 if (destProps.containsKey(key)) {
@@ -167,8 +151,9 @@ public class OpenApiTask extends DefaultTask {
                 }
             }
 
-            destProps.store(Files.newBufferedWriter(dest, StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING), null);
-
+            try (BufferedWriter writer = Files.newBufferedWriter(dest, StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING)) {
+                destProps.store(writer, null);
+            }
             Files.delete(src);
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -188,6 +173,24 @@ public class OpenApiTask extends DefaultTask {
             } else {
                 Files.move(file.toPath(), newFile);
             }
+        }
+    }
+
+    private static class Spec {
+        private final Path file;
+        private final Generator.Type type;
+
+        private Spec(Path file, Generator.Type type) {
+            this.file = file;
+            this.type = type;
+        }
+
+        public Path getFile() {
+            return file;
+        }
+
+        public Generator.Type getType() {
+            return type;
         }
     }
 }

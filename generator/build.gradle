@@ -1,11 +1,13 @@
 plugins {
     id 'java-library'
+    id 'pmd'
+    id 'checkstyle'
+    id 'com.github.spotbugs' version '4.6.0'
 }
 
 dependencies {
-    implementation 'io.swagger.codegen.v3:swagger-codegen:3.0.23'
     // TODO upgrade to support inheritance
-    implementation 'io.swagger.codegen.v3:swagger-codegen-generators:1.0.23'
+    implementation ('io.swagger.codegen.v3:swagger-codegen-generators:1.0.23') {}
     implementation 'com.google.googlejavaformat:google-java-format:1.7'
     testImplementation 'junit:junit:4.13.1'
 }

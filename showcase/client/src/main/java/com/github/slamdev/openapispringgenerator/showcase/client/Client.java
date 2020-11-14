@@ -1,12 +1,16 @@
 package com.github.slamdev.openapispringgenerator.showcase.client;
 
 import com.github.slamdev.openapispringgenerator.showcase.server.api.ServerApi;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class Client implements CommandLineRunner {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
 
     private final ServerApi api;
 
@@ -20,6 +24,6 @@ public class Client implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        System.out.println(api.findPetById(1L));
+        LOGGER.info("{}", api.findPetById(1L));
     }
 }
