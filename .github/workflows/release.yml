@@ -14,7 +14,9 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 8
+      - run: |
+          echo "::set-env name=RELEASE_VERSION::${GITHUB_REF##*/}"
       - uses: eskatos/gradle-command-action@v1
         with:
           dependencies-cache-enabled: true
-          arguments: :plugin:publishPlugins -Pversion=${GITHUB_REF##*/}
+          arguments: :plugin:publishPlugins -Pversion=${RELEASE_VERSION}
