@@ -25,5 +25,5 @@ is really helpful for this task.
 ## Make a release
 
 ```shell script
-TAG=x.x.x git tag -a ${TAG} -m "make ${TAG} release" && git push --tags
+TAG=x.x.x && git tag -a ${TAG} -m "make ${TAG} release" && git push --tags
 ```
