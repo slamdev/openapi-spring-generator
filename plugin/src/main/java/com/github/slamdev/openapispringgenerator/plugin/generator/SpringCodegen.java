@@ -1,4 +1,4 @@
-package com.github.slamdev.openapispringgenerator.generator;
+package com.github.slamdev.openapispringgenerator.plugin.generator;
 
 import io.swagger.codegen.v3.*;
 import io.swagger.codegen.v3.generators.features.OptionalFeatures;

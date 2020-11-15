@@ -2,7 +2,6 @@ plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
     id 'com.gradle.plugin-publish' version '0.12.0'
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
     id 'pmd'
     id 'checkstyle'
     id 'com.github.spotbugs' version '4.6.0'
@@ -24,67 +23,12 @@ pluginBundle {
 }
 
 dependencies {
-    implementation project(':generator')
-    shadow gradleApi()
+    // TODO upgrade to support inheritance
+    implementation ('io.swagger.codegen.v3:swagger-codegen-generators:1.0.23') {
+        // NOTE: gradle manages slf4j implementation
+        exclude module: 'logback-classic'
+        exclude module: 'logback-core'
+    }
+    implementation 'com.google.googlejavaformat:google-java-format:1.7'
     testImplementation 'junit:junit:4.13.1'
-}
-
-// needed to prevent inclusion of gradle-api into shadow JAR
-configurations.compile.dependencies.remove dependencies.gradleApi()
-
-task relocateShadowJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation) {
-    target = tasks.shadowJar
-}
-
-publishing {
-    publications {
-        withType(MavenPublication) { MavenPublication p ->
-            p.pom.withXml {
-                Node pomNode = asNode()
-                pomNode.dependencies.'*'.each() {
-                    it.parent().remove(it)
-                }
-            }
-//            p.setArtifacts([tasks.named('shadowJar').get()])
-        }
-    }
-}
-
-tasks.shadowJar.dependsOn tasks.relocateShadowJar
-
-class TemplatesRemoveTransformer implements com.github.jengelman.gradle.plugins.shadow.transformers.Transformer {
-
-    boolean canTransformResource(FileTreeElement element) {
-        String path = element.relativePath.pathString
-        if (path.endsWith('.class')
-                || path.startsWith('handlebars/springcodegen/')
-                || path.startsWith('META-INF/gradle-plugins')
-        ) {
-            return false
-        }
-        return true
-    }
-
-    void transform(com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext context) {}
-
-    boolean hasTransformedResource() { return false }
-
-    void modifyOutputStream(shadow.org.apache.tools.zip.ZipOutputStream jos, boolean preserveFileTimestamps) {}
-}
-
-shadowJar {
-    minimize()
-    transform(TemplatesRemoveTransformer)
-    archiveClassifier.set('')
-}
-
-tasks.whenTaskAdded {
-    if (name in ['publishPluginJar', 'generateMetadataFileForPluginMavenPublication', 'build']) {
-        dependsOn(tasks.named('shadowJar'))
-    }
-}
-
-// Disabling default jar task as it is overridden by shadowJar
-tasks.named('jar').configure {
-    enabled = false
 }

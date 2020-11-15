@@ -1,6 +1,5 @@
 buildscript {
     dependencies {
-        classpath project(':generator')
         classpath project(':plugin')
     }
 }

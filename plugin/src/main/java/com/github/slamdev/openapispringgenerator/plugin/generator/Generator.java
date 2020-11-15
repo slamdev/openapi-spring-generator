@@ -1,4 +1,4 @@
-package com.github.slamdev.openapispringgenerator.generator;
+package com.github.slamdev.openapispringgenerator.plugin.generator;
 
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;

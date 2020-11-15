@@ -1,6 +1,6 @@
 package com.github.slamdev.openapispringgenerator.plugin;
 
-import com.github.slamdev.openapispringgenerator.generator.Generator;
+import com.github.slamdev.openapispringgenerator.plugin.generator.Generator;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.FileTree;
