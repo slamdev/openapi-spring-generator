@@ -7,24 +7,24 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.compile.JavaCompile;
 
+import java.io.File;
+
 public class OpenApiSpringGeneratorPlugin implements Plugin<Project> {
 
     private static final String PATH = "openapi-generated-sources";
 
     @Override
     public void apply(Project project) {
-        if (!project.getPlugins().hasPlugin(JavaPlugin.class)) {
-            throw new IllegalStateException("Project should have JavaPlugin to be applied first");
-        }
-        OpenApiTask task = project.getTasks().create("openapi", OpenApiTask.class);
-        task.setDestinationDir(project.file(project.getBuildDir().toString() + "/" + PATH));
-        project.getTasks().stream()
-                .filter(JavaCompile.class::isInstance)
-                .forEach(t -> t.dependsOn(task));
-
+        project.getPluginManager().apply(JavaPlugin.class);
+        OpenApiTask task = project.getTasks().create("openapi", OpenApiTask.class, t -> t.setDestinationDir(calculateDestination(project)));
+        project.getTasks().withType(JavaCompile.class, t -> t.dependsOn(task));
         JavaPluginConvention convention = project.getConvention().getPlugin(JavaPluginConvention.class);
         SourceSet sourceSet = convention.getSourceSets().getByName("main");
         sourceSet.java(dir -> dir.srcDir(task.getDestinationDir().toString() + "/main/java"));
         sourceSet.resources(dir -> dir.srcDir(task.getDestinationDir().toString() + "/main/resources"));
+    }
+
+    private File calculateDestination(Project project) {
+        return project.file(project.getBuildDir().toString() + "/" + PATH);
     }
 }
