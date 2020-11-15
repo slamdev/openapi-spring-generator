@@ -1,6 +1,7 @@
 package com.github.slamdev.openapispringgenerator.plugin;
 
 import com.github.slamdev.openapispringgenerator.plugin.generator.Generator;
+import com.github.slamdev.openapispringgenerator.plugin.validator.Validator;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.FileTree;
@@ -8,6 +9,7 @@ import org.gradle.api.tasks.*;
 import org.gradle.internal.logging.progress.ProgressLogger;
 import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 import org.gradle.internal.progress.PercentageProgressFormatter;
+import org.openapitools.codegen.validation.Invalid;
 
 import javax.inject.Inject;
 import java.io.BufferedReader;
@@ -91,13 +93,28 @@ public class OpenApiTask extends DefaultTask {
     }
 
     @TaskAction
-    public void generate() throws IOException {
+    public void run() throws IOException {
         Path tempDir = getTemporaryDir().toPath();
         clearDir(tempDir);
-
         clearDir(destinationDir.toPath());
 
         ProgressLogger progressLogger = progressLoggerFactory.newOperation(OpenApiTask.class);
+        progressLogger.start("OpenApi spec validation", null);
+        try {
+            for (Spec spec : specs) {
+                List<Invalid> results = new Validator().validate(spec.file);
+                if (!results.isEmpty()) {
+                    getLogger().warn("Errors were found during the {} spec validation:", spec.file.getFileName());
+                    for (Invalid result : results) {
+                        getLogger().warn("{}: {}", result.getRule().getSeverity(), result.getMessage());
+                    }
+                }
+            }
+        } finally {
+            progressLogger.completed();
+        }
+
+        progressLogger = progressLoggerFactory.newOperation(OpenApiTask.class);
         progressLogger.start("OpenApi code generation", null);
         try {
             PercentageProgressFormatter progressFormatter = new PercentageProgressFormatter("Generating", specs.size());

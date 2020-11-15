@@ -29,6 +29,9 @@ dependencies {
         exclude module: 'logback-classic'
         exclude module: 'logback-core'
     }
+    implementation ('org.openapitools:openapi-generator:5.0.0-beta2') {
+        exclude module: 'slf4j-simple'
+    }
     implementation 'com.google.googlejavaformat:google-java-format:1.7'
     testImplementation 'junit:junit:4.13.1'
 }
