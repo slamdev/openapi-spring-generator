@@ -8,7 +8,9 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.3.5.RELEASE'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
-//    id 'com.github.slamdev.openapi-spring-generator'
+    id 'pmd'
+    id 'checkstyle'
+    id 'com.github.spotbugs' version '4.6.0'
 }
 
 apply plugin: 'com.github.slamdev.openapi-spring-generator'
@@ -16,7 +18,7 @@ apply plugin: 'com.github.slamdev.openapi-spring-generator'
 openapi {
     client file('../server/src/main/resources/openapi/petstore-expanded.yaml')
     client file('../server/src/main/resources/openapi/upload-download.yaml')
-    client file('../server/src/main/resources/openapi/oneof-anyof-allof-not.yaml')
+    client file('../server/src/main/resources/openapi/polymorphism.yaml')
 }
 
 dependencies {

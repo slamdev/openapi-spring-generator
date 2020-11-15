@@ -27,17 +27,17 @@ subprojects {
 
     plugins.withId('pmd') {
         pmd {
-            toolVersion = '6.25.0'
+            toolVersion = '6.29.0'
             ignoreFailures = false
             consoleOutput = false
         }
         tasks.withType(Pmd) {
             if (name == 'pmdMain') {
                 source = 'src/main/java'
-                ruleSetFiles = files("../../etc/java-support/lint/pmd/ruleSetMain.xml")
+                ruleSetFiles = files('gradle/lint/pmd/ruleSetMain.xml')
                 ruleSets = []
             } else {
-                ruleSetFiles = files("../../etc/java-support/lint/pmd/ruleSetTest.xml")
+                ruleSetFiles = files('gradle/lint/pmd/ruleSetTest.xml')
                 ruleSets = []
             }
             exclude '**/api/**'
@@ -46,43 +46,44 @@ subprojects {
 
     plugins.withId('checkstyle') {
         checkstyle {
-            toolVersion = '8.34'
+            toolVersion = '8.37'
             ignoreFailures = false
             showViolations = false
         }
         tasks.withType(Checkstyle) {
             if (name == 'checkstyleMain') {
                 source = 'src/main/java'
-                configFile = file("../../etc/java-support/lint/checkstyle/checkstyleMain.xml")
+                configFile = file('gradle/lint/checkstyle/checkstyleMain.xml')
             } else {
-                configFile = file("../../etc/java-support/lint/checkstyle/checkstyleTest.xml")
+                configFile = file('gradle/lint/checkstyle/checkstyleTest.xml')
             }
             exclude '**/api/**'
         }
         dependencies {
             checkstyle 'com.thomasjensen.checkstyle.addons:checkstyle-addons:6.0.1'
-            checkstyle 'com.github.sevntu-checkstyle:sevntu-checks:1.37.1'
+            checkstyle 'com.github.sevntu-checkstyle:sevntu-checks:1.38.0'
         }
     }
-    plugins.withId('spotbugs') {
+
+    plugins.withId('com.github.spotbugs') {
         spotbugs {
-            toolVersion = '4.0.6'
+            toolVersion = '4.1.4'
             ignoreFailures = false
             effort = 'max'
             reportLevel = 'low'
         }
-        tasks.withType(SpotBugs) {
-            if (name == 'spotbugsMain') {
-                excludeFilter = file("${rootProject.projectDir}/config/findbugs/excludeMain.xml")
-            } else {
-                excludeFilter = file("${rootProject.projectDir}/config/findbugs/excludeTest.xml")
-            }
-            reports {
-                xml.enabled = false
-                html.enabled = true
+        tasks.withType(VerificationTask) {
+            if (name.startsWith('spotbugs')) {
+                if (name == 'spotbugsMain') {
+                    excludeFilter = file('gradle/lint/findbugs/excludeMain.xml')
+                } else {
+                    excludeFilter = file('gradle/lint/findbugs/excludeTest.xml')
+                }
+                reports {
+                    xml.enabled = false
+                    html.enabled = true
+                }
             }
         }
     }
-
-
 }

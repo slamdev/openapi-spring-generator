@@ -1,6 +1,5 @@
 buildscript {
     dependencies {
-        classpath project(':generator')
         classpath project(':plugin')
     }
 }
@@ -9,7 +8,9 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.3.5.RELEASE'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
-//    id 'com.github.slamdev.openapi-spring-generator'
+    id 'pmd'
+    id 'checkstyle'
+    id 'com.github.spotbugs' version '4.6.0'
 }
 
 apply plugin: 'com.github.slamdev.openapi-spring-generator'
@@ -20,7 +21,7 @@ openapi {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+//    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 }

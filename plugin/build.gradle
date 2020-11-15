@@ -1,8 +1,34 @@
 plugins {
     id 'java-gradle-plugin'
+    id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '0.12.0'
+    id 'pmd'
+    id 'checkstyle'
+    id 'com.github.spotbugs' version '4.6.0'
+}
+
+gradlePlugin {
+    plugins.register 'openapi-spring-generator', {
+        id = 'com.github.slamdev.openapi-spring-generator'
+        displayName = 'openapi-spring-generator'
+        description = 'OpenAPI Generator for Java Spring framework'
+        implementationClass = 'com.github.slamdev.openapispringgenerator.plugin.OpenApiSpringGeneratorPlugin'
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/slamdev/openapi-spring-generator'
+    vcsUrl = 'https://github.com/slamdev/openapi-spring-generator.git'
+    tags = ['openapi', 'swagger', 'spring']
 }
 
 dependencies {
-    api project(':generator')
+    // TODO upgrade to support inheritance
+    implementation ('io.swagger.codegen.v3:swagger-codegen-generators:1.0.23') {
+        // NOTE: gradle manages slf4j implementation
+        exclude module: 'logback-classic'
+        exclude module: 'logback-core'
+    }
+    implementation 'com.google.googlejavaformat:google-java-format:1.7'
     testImplementation 'junit:junit:4.13.1'
 }

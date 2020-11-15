@@ -5,6 +5,7 @@ info:
 x-package-name: com.github.slamdev.openapispringgenerator.showcase.server.api
 x-api-name-prefix: UploadDownload
 x-path-variable-name: server.url
+#x-security-role: ROLE_USER
 servers:
   - url: /api/files
 paths:
@@ -24,10 +25,13 @@ paths:
       requestBody:
         required: true
         content:
-          image/png:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
       responses:
         '200':
           description: OK
@@ -35,6 +39,7 @@ paths:
     post:
       operationId: uploadMultipart
       requestBody:
+        required: true
         content:
           multipart/form-data:
             schema:
@@ -58,10 +63,17 @@ paths:
     post:
       operationId: uploadMultiple
       requestBody:
+        required: true
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/UploadMulti'
+              type: object
+              properties:
+                filenames:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
       responses:
         '200':
           description: OK
@@ -86,6 +98,9 @@ components:
           type: string
           format: byte
           description: Base64-encoded contents of the avatar image
+        created:
+          type: string
+          format: date-time
     UploadMulti:
       type: object
       properties:
