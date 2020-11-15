@@ -17,6 +17,8 @@ jobs:
       - run: |
           echo "::set-env name=RELEASE_VERSION::${GITHUB_REF##*/}"
       - uses: eskatos/gradle-command-action@v1
+        env:
+          ORG_GRADLE_PROJECT_version: ${RELEASE_VERSION}
         with:
           dependencies-cache-enabled: true
-          arguments: :plugin:publishPlugins -Pversion=${RELEASE_VERSION}
+          arguments: :plugin:publishPlugins
