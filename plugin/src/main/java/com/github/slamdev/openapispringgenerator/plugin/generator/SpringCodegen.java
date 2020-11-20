@@ -3,7 +3,12 @@ package com.github.slamdev.openapispringgenerator.plugin.generator;
 import io.swagger.codegen.v3.*;
 import io.swagger.codegen.v3.generators.features.OptionalFeatures;
 import io.swagger.codegen.v3.generators.java.AbstractJavaCodegen;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -16,8 +21,10 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
         super();
         projectFolder = "";
         sourceFolder = "";
-        supportedLibraries.put("server", "");
-        supportedLibraries.put("client", "");
+        supportedLibraries.put("server", "RestController interface");
+        supportedLibraries.put("client", "RestTemplate client");
+        supportedLibraries.put("consumer", "StreamListener interface");
+        supportedLibraries.put("producer", "Stream client");
         additionalProperties.put(DATE_LIBRARY, "java8");
         additionalProperties.put(JAVA8_MODE, true);
     }
@@ -26,7 +33,7 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
     public void processOpts() {
         super.processOpts();
         apiTemplateFiles.put("api.mustache", ".java");
-        if (CodegenType.CLIENT.equals(getTag())) {
+        if (Arrays.asList("client", "producer").contains(getLibrary())) {
             supportingFiles.add(new SupportingFile("spring.factories.mustache", "META-INF", "spring.factories"));
         }
         modelTemplateFiles.put("model.mustache", ".java");
@@ -45,15 +52,21 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
         }
     }
 
+    private boolean isStream() {
+        return Arrays.asList("consumer", "producer").contains(getLibrary());
+    }
+
     @Override
     public String toApiName(String name) {
+        String suffix = isStream() ? "Stream" : "Api";
         if (vendorExtensions.containsKey("x-api-name-prefix")) {
-            return vendorExtensions.get("x-api-name-prefix").toString() + "Api";
+            name = vendorExtensions.get("x-api-name-prefix").toString();
+            return name + suffix;
         }
-        if (name.length() == 0) {
-            return "DefaultApi";
+        if (name.isEmpty()) {
+            return "Default" + suffix;
         }
-        return camelize(name) + "Api";
+        return camelize(name) + suffix;
     }
 
     @Override
@@ -84,7 +97,10 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
 
     @Override
     public CodegenType getTag() {
-        return CodegenType.forValue(library);
+        if (Arrays.asList("consumer", "client").contains(getLibrary())) {
+            return CodegenType.CLIENT;
+        }
+        return CodegenType.SERVER;
     }
 
     @Override
@@ -113,6 +129,19 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
                 model.getVendorExtensions().put("x-inheritance", true);
             }
         });
+    }
+
+    @Override
+    public void preprocessOpenAPI(OpenAPI openAPI) {
+        super.preprocessOpenAPI(openAPI);
+        if (!isStream()) {
+            return;
+        }
+        for (PathItem path : openAPI.getPaths().values()) {
+            if (path.readOperations().size() > 1) {
+                throw new IllegalStateException("Only one operation per path is allowed for streams generation");
+            }
+        }
     }
 
     @Override
@@ -170,6 +199,11 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
                         operation.returnContainer = returnContainer;
                     }
                 });
+
+                if (isStream()) {
+                    operation.vendorExtensions.putIfAbsent("x-topic-name", operation.path.replaceFirst("/", ""));
+                    operation.vendorExtensions.putIfAbsent("x-topic-class", camelizeVarName(operation.path, false));
+                }
             }
         }
 
@@ -181,6 +215,18 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
             });
         }
         return objs;
+    }
+
+    @Override
+    protected String getOrGenerateOperationId(Operation operation, String path, String httpMethod) {
+        if (isStream() && StringUtils.isBlank(operation.getOperationId())) {
+            String topic = camelizeVarName(path, false);
+            if (CodegenType.CLIENT.equals(getTag())) {
+                return "process" + topic;
+            }
+            return "send" + topic;
+        }
+        return super.getOrGenerateOperationId(operation, path, httpMethod);
     }
 
     private void doDataTypeAssignment(String returnType, DataTypeAssigner dataTypeAssigner) {

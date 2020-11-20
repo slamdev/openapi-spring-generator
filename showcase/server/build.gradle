@@ -16,11 +16,13 @@ plugins {
 apply plugin: 'com.github.slamdev.openapi-spring-generator'
 
 openapi {
-    server fileTree('src/main/resources/openapi') { include('*.yaml') }
+    server fileTree('src/main/resources/openapi/http') { include('*.yaml') }
+    consumer file('../client/src/main/resources/openapi/stream/events.yaml')
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.kafka:spring-kafka'
 //    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

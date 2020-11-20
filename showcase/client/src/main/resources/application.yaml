@@ -1,1 +1,13 @@
 server.url: http://localhost:8080
+spring:
+  application:
+    name: client
+  kafka:
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 3
+      acks: 1
+logging:
+  level:
+    org.apache.kafka: warn

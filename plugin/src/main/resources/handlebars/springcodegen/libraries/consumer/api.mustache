@@ -1,0 +1,35 @@
+package {{package}};
+
+{{#imports}}import {{import}};
+{{/imports}}
+import lombok.experimental.UtilityClass;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.handler.annotation.Headers;
+import org.springframework.messaging.handler.annotation.Payload;
+
+{{#operations}}
+@UtilityClass
+public class {{classname}} {
+
+{{#operation}}
+    {{#contents}}
+    public interface {{{vendorExtensions.x-topic-class}}} {
+
+        @KafkaListener(topics = "{{{vendorExtensions.x-topic-name}}}")
+        default void {{operationId}}Ack(@Payload {{>returnTypes}} event, @Headers MessageHeaders headers) {
+            {{operationId}}(event, headers);
+            Acknowledgment acknowledgment = headers.get(KafkaHeaders.ACKNOWLEDGMENT, Acknowledgment.class);
+            if (acknowledgment != null) {
+                acknowledgment.acknowledge();
+            }
+        }
+
+        void {{operationId}}({{>returnTypes}} event, MessageHeaders headers);
+    }
+    {{/contents}}
+{{/operation}}
+}
+{{/operations}}

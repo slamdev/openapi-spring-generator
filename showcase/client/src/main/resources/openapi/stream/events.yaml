@@ -1,0 +1,37 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Topics and events
+x-package-name: com.github.slamdev.openapispringgenerator.showcase.client.stream
+x-api-name-prefix: Client
+paths:
+  /users: # topic name
+    post: # can be anything
+      responses:
+        '200': # can be anything
+          description: OK
+          content:
+            application/json: # can be anything
+              schema:
+                $ref: '#/components/schemas/UserEvent'
+  /companies: # topic name
+    post: # can be anything
+      responses:
+        '200': # can be anything
+          description: OK
+          content:
+            application/json: # can be anything
+              schema:
+                $ref: '#/components/schemas/CompanyEvent'
+components:
+  schemas:
+    UserEvent:
+      type: object
+      properties:
+        email:
+          type: string
+    CompanyEvent:
+      type: object
+      properties:
+        name:
+          type: string

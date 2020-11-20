@@ -16,14 +16,14 @@ plugins {
 apply plugin: 'com.github.slamdev.openapi-spring-generator'
 
 openapi {
-    client file('../server/src/main/resources/openapi/petstore-expanded.yaml')
-    client file('../server/src/main/resources/openapi/upload-download.yaml')
-    client file('../server/src/main/resources/openapi/polymorphism.yaml')
+    client file('../server/src/main/resources/openapi/http/petstore-expanded.yaml')
+    producer fileTree('src/main/resources/openapi/stream') { include('*.yaml') }
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-json'
+    implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework:spring-web'
     implementation 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

@@ -52,25 +52,46 @@ public class OpenApiTask extends DefaultTask {
     }
 
     public void client(File file) {
-        specs.add(new Spec(file.toPath(), Generator.Type.CLIENT));
+        specs.add(toSpec(Generator.Type.CLIENT, file));
     }
 
     public void client(FileCollection fileCollection) {
-        fileCollection.getFiles().stream()
-                .map(File::toPath)
-                .map(f -> new Spec(f, Generator.Type.CLIENT))
-                .forEach(specs::add);
+        specs.addAll(toSpecs(Generator.Type.CLIENT, fileCollection));
     }
 
     public void server(File file) {
-        specs.add(new Spec(file.toPath(), Generator.Type.SERVER));
+        specs.add(toSpec(Generator.Type.SERVER, file));
     }
 
     public void server(FileCollection fileCollection) {
-        fileCollection.getFiles().stream()
+        specs.addAll(toSpecs(Generator.Type.SERVER, fileCollection));
+    }
+
+    public void producer(File file) {
+        specs.add(toSpec(Generator.Type.PRODUCER, file));
+    }
+
+    public void producer(FileCollection fileCollection) {
+        specs.addAll(toSpecs(Generator.Type.PRODUCER, fileCollection));
+    }
+
+    public void consumer(File file) {
+        specs.add(toSpec(Generator.Type.CONSUMER, file));
+    }
+
+    public void consumer(FileCollection fileCollection) {
+        specs.addAll(toSpecs(Generator.Type.CONSUMER, fileCollection));
+    }
+
+    private Spec toSpec(Generator.Type type, File file) {
+        return new Spec(file.toPath(), type);
+    }
+
+    private List<Spec> toSpecs(Generator.Type type, FileCollection fileCollection) {
+        return fileCollection.getFiles().stream()
                 .map(File::toPath)
-                .map(f -> new Spec(f, Generator.Type.SERVER))
-                .forEach(specs::add);
+                .map(f -> new Spec(f, type))
+                .collect(Collectors.toList());
     }
 
     @Input
@@ -104,7 +125,7 @@ public class OpenApiTask extends DefaultTask {
             for (Spec spec : specs) {
                 List<Invalid> results = new Validator().validate(spec.file);
                 if (!results.isEmpty()) {
-                    getLogger().warn("Errors were found during the {} spec validation:", spec.file.getFileName());
+                    getLogger().warn("Errors were found during the '{}' spec validation:", spec.file.getFileName());
                     for (Invalid result : results) {
                         getLogger().warn("{}: {}", result.getRule().getSeverity(), result.getMessage());
                     }

@@ -1,6 +1,6 @@
 <FindBugsFilter>
     <Match>
-        <Package name="~.*\.api\.?.*"/>
+        <Package name="~.*\.(api|stream)\.?.*"/>
     </Match>
     <!--NOTE: all matchers should be also added to excludeTest.xml-->
     <Match>

@@ -1,0 +1,68 @@
+package {{package}};
+
+{{#imports}}import {{import}};
+{{/imports}}
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaOperations;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.kafka.support.SendResult;
+import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.util.concurrent.ListenableFuture;
+
+import java.time.Duration;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+{{#operations}}
+public class {{classname}} {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger({{classname}}.class);
+    private final KafkaOperations<Object, Object> kafkaOperations;
+    private final Duration timeout;
+
+    public {{classname}}(KafkaOperations<Object, Object> kafkaOperations, @Value("${stream.{{classname}}.producer.timeout:${stream.producer.timeout:1s}}") Duration timeout) {
+        this.kafkaOperations = kafkaOperations;
+        this.timeout = timeout;
+    }
+
+    private void send(String topic, Object event, Object key, Map<String, Object> headers) {
+        MessageBuilder<Object> builder = MessageBuilder
+                .withPayload(event)
+                .copyHeaders(headers)
+                .setHeaderIfAbsent(KafkaHeaders.TOPIC, topic)
+                .setHeaderIfAbsent(KafkaHeaders.MESSAGE_KEY, key);
+        ListenableFuture<SendResult<Object, Object>> future = kafkaOperations.send(builder.build());
+        try {
+            SendResult<Object, Object> result = future.get(timeout.getSeconds(), TimeUnit.SECONDS);
+            LOGGER.debug("event is sent to {} topic with result: {}", topic, result);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new org.apache.kafka.common.errors.TimeoutException("failed to wait for send confirmation from {{{vendorExtensions.x-topic-name}}}", e);
+        }
+    }
+
+{{#operation}}
+    {{#contents}}
+    public void {{operationId}}({{>returnTypes}} event) {
+        {{operationId}}(event, null);
+    }
+
+    public void {{operationId}}({{>returnTypes}} event, Object key) {
+        {{operationId}}(event, key, Collections.emptyMap());
+    }
+
+    public void {{operationId}}({{>returnTypes}} event, Map<String, Object> headers) {
+        {{operationId}}(event, null, headers);
+    }
+
+    public void {{operationId}}({{>returnTypes}} event, Object key, Map<String, Object> headers) {
+        send("{{{vendorExtensions.x-topic-name}}}", event, key, headers);
+    }
+    {{/contents}}
+{{/operation}}
+}
+{{/operations}}

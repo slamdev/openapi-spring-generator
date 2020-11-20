@@ -22,7 +22,7 @@ import java.util.Locale;
 public class Generator {
 
     public enum Type {
-        SERVER, CLIENT
+        SERVER, CLIENT, CONSUMER, PRODUCER
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Generator.class);

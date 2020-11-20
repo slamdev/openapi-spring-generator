@@ -48,6 +48,7 @@
         <exclude name="CouplingBetweenObjects"/>
         <exclude name="UseObjectForClearerAPI"/>
         <exclude name="NPathComplexity"/>
+        <exclude name="GodClass"/>
     </rule>
     <rule ref="category/java/documentation.xml">
         <exclude name="CommentRequired"/>

@@ -41,6 +41,7 @@ subprojects {
                 ruleSets = []
             }
             exclude '**/api/**'
+            exclude '**/stream/**'
         }
     }
 
@@ -58,6 +59,7 @@ subprojects {
                 configFile = file('gradle/lint/checkstyle/checkstyleTest.xml')
             }
             exclude '**/api/**'
+            exclude '**/stream/**'
         }
         dependencies {
             checkstyle 'com.thomasjensen.checkstyle.addons:checkstyle-addons:6.0.1'

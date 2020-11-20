@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: server
+  kafka:
+    listener:
+      ack-mode: manual_immediate
+      concurrency: 10
+    consumer:
+      group-id: ${spring.application.name}
+      enable-auto-commit: false
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+logging:
+  level:
+    org.apache.kafka: warn
