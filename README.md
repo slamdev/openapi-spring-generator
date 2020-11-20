@@ -7,13 +7,14 @@ OpenAPI Generator for Java Spring framework
 
 ## Motivation
 
-In a microservice world you need to provide some communication layer between your services. If you are choosing REST API
-the workflow is usually the following: in service **A**(producer) you create REST controllers and some DTOs to describe 
-you API. In service **B**(consumer) you create the same DTOs and some code to call the **A**'s endpoints. If 
-requirements are changed you need to make modifications in both services. If there are multiple consumers there is a big
-chance that you forgot to modify one of them.
+In a microservice world you need to provide a communication layer between your services. Doesnt matter you go with sync
+(HTTP) or async (PubSub) way, you need to maintain a contract between two sides.
 
-The AIM of this plugin is to solve this issue and to generate some boilerplate for you communication layer.
+This plugin generates code for DTOs as well as interfaces\services for HTTP client\server and PubSub consumer\producer
+based on the OpenApi v2\v3 spec file.
+
+Whenever the spec file is changed, generated code is changed as well, thus allowing you to catch and contract 
+incompatibilities in the runtime.
 
 ## Usage
 
