@@ -120,12 +120,10 @@ public class OpenApiTask extends DefaultTask {
         progressLogger.start("OpenApi spec validation", null);
         try {
             for (Spec spec : specs) {
+                getLogger().lifecycle("Validating '{}' spec for {}", spec.file.getFileName(), spec.getType());
                 List<Invalid> results = new Validator().validate(spec.file);
-                if (!results.isEmpty()) {
-                    getLogger().warn("Errors were found during the '{}' spec validation:", spec.file.getFileName());
-                    for (Invalid result : results) {
-                        getLogger().warn("{}: {}", result.getRule().getSeverity(), result.getMessage());
-                    }
+                for (Invalid result : results) {
+                    getLogger().warn("{}: {}", result.getRule().getSeverity(), result.getMessage());
                 }
             }
         } finally {
