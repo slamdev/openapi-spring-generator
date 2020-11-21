@@ -72,9 +72,6 @@ import org.springframework.util.StringUtils;
     }
 
     private static List<MediaType> selectHeaderAccept(String[] accepts) {
-        if (accepts.length == 0) {
-            return null;
-        }
         for (String accept : accepts) {
             MediaType mediaType = MediaType.parseMediaType(accept);
             if (isJsonMime(mediaType)) {
@@ -85,9 +82,6 @@ import org.springframework.util.StringUtils;
     }
 
     private static MediaType selectHeaderContentType(String[] contentTypes) {
-        if (contentTypes.length == 0) {
-            return MediaType.APPLICATION_JSON;
-        }
         for (String contentType : contentTypes) {
             MediaType mediaType = MediaType.parseMediaType(contentType);
             if (isJsonMime(mediaType)) {
@@ -118,13 +112,17 @@ import org.springframework.util.StringUtils;
 
                 String[] _accepts = { {{#hasProduces}}
                 {{#produces}}"{{mediaType}}"{{#hasMore}}, {{/hasMore}}{{/produces}}{{/hasProduces}} };
-                List<MediaType> _accept = selectHeaderAccept(_accepts);
-                _headers.setAccept(_accept);
+                if (_accepts.length > 0) {
+                    List<MediaType> _accept = selectHeaderAccept(_accepts);
+                    _headers.setAccept(_accept);
+                }
 
                 String[] _contentTypes = { {{#hasConsumes}}
                 {{#consumes}}"{{mediaType}}"{{#hasMore}}, {{/hasMore}}{{/consumes}}{{/hasConsumes}} };
-                MediaType _contentType = selectHeaderContentType(_contentTypes);
-                _headers.setContentType(_contentType);
+                if (_contentTypes.length > 0) {
+                    MediaType _contentType = selectHeaderContentType(_contentTypes);
+                    _headers.setContentType(_contentType);
+                }
 
                 {{#headerParams}}
                 _headers.set("{{baseName}}", {{paramName}}.toString());
