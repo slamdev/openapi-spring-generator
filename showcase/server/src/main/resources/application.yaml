@@ -3,6 +3,7 @@ spring:
     name: server
   kafka:
     listener:
+      auto-startup: false
       ack-mode: manual_immediate
       concurrency: 10
     consumer:
