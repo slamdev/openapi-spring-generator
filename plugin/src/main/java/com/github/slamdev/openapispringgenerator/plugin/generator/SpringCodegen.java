@@ -58,7 +58,12 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
 
     @Override
     public String toApiName(String name) {
-        String suffix = isStream() ? "Stream" : "Api";
+        String suffix = "Api";
+        if ("consumer".equals(getLibrary())) {
+            suffix = "StreamConsumer";
+        } else if ("producer".equals(getLibrary())) {
+            suffix = "StreamProducer";
+        }
         if (vendorExtensions.containsKey("x-api-name-prefix")) {
             name = vendorExtensions.get("x-api-name-prefix").toString();
             return name + suffix;

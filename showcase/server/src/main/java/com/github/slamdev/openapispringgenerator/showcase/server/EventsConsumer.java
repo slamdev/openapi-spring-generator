@@ -1,6 +1,6 @@
 package com.github.slamdev.openapispringgenerator.showcase.server;
 
-import com.github.slamdev.openapispringgenerator.showcase.client.stream.ClientStream;
+import com.github.slamdev.openapispringgenerator.showcase.client.stream.ClientStreamConsumer;
 import com.github.slamdev.openapispringgenerator.showcase.client.stream.CompanyEvent;
 import com.github.slamdev.openapispringgenerator.showcase.client.stream.UserEvent;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class EventsConsumer implements ClientStream.Companies, ClientStream.Users {
+public class EventsConsumer implements ClientStreamConsumer.Companies, ClientStreamConsumer.Users {
 
     @Override
     public void processCompanies(CompanyEvent event, MessageHeaders headers) {

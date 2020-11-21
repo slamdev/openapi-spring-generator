@@ -1,6 +1,6 @@
 package com.github.slamdev.openapispringgenerator.showcase.client;
 
-import com.github.slamdev.openapispringgenerator.showcase.client.stream.ClientStream;
+import com.github.slamdev.openapispringgenerator.showcase.client.stream.ClientStreamProducer;
 import com.github.slamdev.openapispringgenerator.showcase.client.stream.CompanyEvent;
 import com.github.slamdev.openapispringgenerator.showcase.client.stream.UserEvent;
 import com.github.slamdev.openapispringgenerator.showcase.server.api.ServerApi;
@@ -21,7 +21,7 @@ public class Client implements CommandLineRunner {
 
     private final ServerApi api;
 
-    private final ClientStream stream;
+    private final ClientStreamProducer stream;
 
     public static void main(String[] args) {
         SpringApplication.run(Client.class, args);

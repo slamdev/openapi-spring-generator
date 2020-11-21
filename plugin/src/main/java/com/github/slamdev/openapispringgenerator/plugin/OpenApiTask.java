@@ -20,10 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -145,6 +142,15 @@ public class OpenApiTask extends DefaultTask {
 
                 FileTree javaTree = (FileTree) getProject().fileTree(tempDir).include("**/*.java");
                 move(javaTree, "java", (src, dest) -> {
+                    try {
+                        byte[] f1 = Files.readAllBytes(src);
+                        byte[] f2 = Files.readAllBytes(dest);
+                        if (Arrays.equals(f1, f2)) {
+                            return;
+                        }
+                    } catch (IOException e) {
+                        throw new IllegalStateException(e);
+                    }
                     throw new IllegalStateException("" + dest + " already exists");
                 });
 
