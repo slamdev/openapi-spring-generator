@@ -208,8 +208,9 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
                 if (isStream()) {
                     String topic = operation.path.replaceFirst("/", "");
                     operation.vendorExtensions.putIfAbsent("x-topic-name", topic);
-                    operation.vendorExtensions.putIfAbsent("x-topic-class", camelizeVarName(topic, false));
-                    operation.vendorExtensions.putIfAbsent("x-topic-const", underscore(topic + "_topic").toUpperCase(Locale.getDefault()));
+                    String camelCased = camelizeVarName(topic, false);
+                    operation.vendorExtensions.putIfAbsent("x-topic-class", camelCased);
+                    operation.vendorExtensions.putIfAbsent("x-topic-const", underscore(camelCased + "_topic").toUpperCase(Locale.getDefault()));
                 }
             }
         }
