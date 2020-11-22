@@ -25,7 +25,7 @@ public class OpenApiSpringGeneratorPluginTest {
     public void should_run_task() throws IOException {
         task.consumer(file("event-spec-v3.yaml"));
         task.producer(file("event-spec-v3.yaml"));
-        task.setDestinationDir(new File("build/output"));
+        task.setDestinationDir(new File("build/test-output-plugin"));
         task.run();
     }
 

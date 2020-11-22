@@ -11,7 +11,7 @@ public class GeneratorTest {
     @Test
     public void should_generate() {
         Generator g = new Generator();
-        g.generate(file("event-spec-v3.yaml"), Generator.Type.PRODUCER, Paths.get("build/output"), true);
+        g.generate(file("event-spec-v3.yaml"), Generator.Type.PRODUCER, Paths.get("build/test-output"), true);
     }
 
     private Path file(String name) {
