@@ -2,6 +2,7 @@ package {{package}};
 
 {{#imports}}import {{import}};
 {{/imports}}
+import lombok.extern.slf4j.Slf4j;
 import lombok.experimental.UtilityClass;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
@@ -11,6 +12,7 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 
 {{#operations}}
+@Slf4j
 @UtilityClass
 public class {{classname}} {
 
@@ -29,6 +31,7 @@ public class {{classname}} {
                        }
         )
         default void {{operationId}}Ack(@Payload {{>returnTypes}} event, @Headers MessageHeaders headers) {
+            log.debug("new messages received from '{}' topic: '{}' with headers: '{}'", {{{vendorExtensions.x-topic-const}}}, event, headers);
             {{operationId}}(event, headers);
             Acknowledgment acknowledgment = headers.get(KafkaHeaders.ACKNOWLEDGMENT, Acknowledgment.class);
             if (acknowledgment != null) {

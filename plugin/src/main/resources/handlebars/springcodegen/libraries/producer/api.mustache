@@ -2,12 +2,12 @@ package {{package}};
 
 {{#imports}}import {{import}};
 {{/imports}}
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.SendResult;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.util.concurrent.ListenableFuture;
 
@@ -19,9 +19,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 {{#operations}}
+@Slf4j
 public class {{classname}} {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger({{classname}}.class);
     private final KafkaOperations<String, Object> kafkaOperations;
     private final Duration timeout;
 
@@ -31,15 +31,17 @@ public class {{classname}} {
     }
 
     private void send(String topic, Object event, String key, Map<String, Object> headers) {
-        MessageBuilder<Object> builder = MessageBuilder
+        Message<Object> message = MessageBuilder
                 .withPayload(event)
                 .copyHeaders(headers)
                 .setHeaderIfAbsent(KafkaHeaders.TOPIC, topic)
-                .setHeaderIfAbsent(KafkaHeaders.MESSAGE_KEY, key);
-        ListenableFuture<SendResult<String, Object>> future = kafkaOperations.send(builder.build());
+                .setHeaderIfAbsent(KafkaHeaders.MESSAGE_KEY, key)
+                .build();
+        log.debug("sending message to '{}' topic: '{}'", topic, message);
+        ListenableFuture<SendResult<String, Object>> future = kafkaOperations.send(message);
         try {
             SendResult<String, Object> result = future.get(timeout.getSeconds(), TimeUnit.SECONDS);
-            LOGGER.debug("event is sent to {} topic with result: {}", topic, result);
+            log.trace("event is sent to {} topic with result: {}", topic, result);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new org.apache.kafka.common.errors.TimeoutException("failed to wait for send confirmation from {{{vendorExtensions.x-topic-name}}}", e);
         }
