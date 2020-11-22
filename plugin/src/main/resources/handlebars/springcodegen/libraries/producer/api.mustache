@@ -22,23 +22,23 @@ import java.util.concurrent.TimeoutException;
 public class {{classname}} {
 
     private static final Logger LOGGER = LoggerFactory.getLogger({{classname}}.class);
-    private final KafkaOperations<Object, Object> kafkaOperations;
+    private final KafkaOperations<String, Object> kafkaOperations;
     private final Duration timeout;
 
-    public {{classname}}(KafkaOperations<Object, Object> kafkaOperations, @Value("${stream.{{classname}}.producer.timeout:${stream.producer.timeout:1s}}") Duration timeout) {
+    public {{classname}}(KafkaOperations<String, Object> kafkaOperations, @Value("${stream.{{classname}}.producer.timeout:${stream.producer.timeout:1s}}") Duration timeout) {
         this.kafkaOperations = kafkaOperations;
         this.timeout = timeout;
     }
 
-    private void send(String topic, Object event, Object key, Map<String, Object> headers) {
+    private void send(String topic, Object event, String key, Map<String, Object> headers) {
         MessageBuilder<Object> builder = MessageBuilder
                 .withPayload(event)
                 .copyHeaders(headers)
                 .setHeaderIfAbsent(KafkaHeaders.TOPIC, topic)
                 .setHeaderIfAbsent(KafkaHeaders.MESSAGE_KEY, key);
-        ListenableFuture<SendResult<Object, Object>> future = kafkaOperations.send(builder.build());
+        ListenableFuture<SendResult<String, Object>> future = kafkaOperations.send(builder.build());
         try {
-            SendResult<Object, Object> result = future.get(timeout.getSeconds(), TimeUnit.SECONDS);
+            SendResult<String, Object> result = future.get(timeout.getSeconds(), TimeUnit.SECONDS);
             LOGGER.debug("event is sent to {} topic with result: {}", topic, result);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new org.apache.kafka.common.errors.TimeoutException("failed to wait for send confirmation from {{{vendorExtensions.x-topic-name}}}", e);
@@ -50,10 +50,10 @@ public class {{classname}} {
     public static final String {{{vendorExtensions.x-topic-const}}} = "{{{vendorExtensions.x-topic-name}}}";
 
     public void {{operationId}}({{>returnTypes}} event) {
-        {{operationId}}(event, null);
+        {{operationId}}(event, Collections.emptyMap());
     }
 
-    public void {{operationId}}({{>returnTypes}} event, Object key) {
+    public void {{operationId}}({{>returnTypes}} event, String key) {
         {{operationId}}(event, key, Collections.emptyMap());
     }
 
@@ -61,7 +61,7 @@ public class {{classname}} {
         {{operationId}}(event, null, headers);
     }
 
-    public void {{operationId}}({{>returnTypes}} event, Object key, Map<String, Object> headers) {
+    public void {{operationId}}({{>returnTypes}} event, String key, Map<String, Object> headers) {
         send({{{vendorExtensions.x-topic-const}}}, event, key, headers);
     }
     {{/contents}}
