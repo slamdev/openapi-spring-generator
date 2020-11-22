@@ -11,6 +11,9 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 {{#operations}}
 @Slf4j
 @UtilityClass
@@ -31,7 +34,12 @@ public class {{classname}} {
                        }
         )
         default void {{operationId}}Ack(@Payload {{>returnTypes}} event, @Headers MessageHeaders headers) {
-            log.debug("new messages received from '{}' topic: '{}' with headers: '{}'", {{{vendorExtensions.x-topic-const}}}, event, headers);
+            if (log.isDebugEnabled()) {
+                Map<String, Object> filtered = headers.entrySet().stream()
+                    .filter(e -> !KafkaHeaders.ACKNOWLEDGMENT.equals(e.getKey()))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                log.debug("new messages received from '{}' topic: '{}' with headers: '{}'", {{{vendorExtensions.x-topic-const}}}, event, filtered);
+            }
             {{operationId}}(event, headers);
             Acknowledgment acknowledgment = headers.get(KafkaHeaders.ACKNOWLEDGMENT, Acknowledgment.class);
             if (acknowledgment != null) {
