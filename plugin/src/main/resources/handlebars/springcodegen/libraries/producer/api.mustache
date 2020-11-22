@@ -47,6 +47,8 @@ public class {{classname}} {
 
 {{#operation}}
     {{#contents}}
+    public static final String {{{vendorExtensions.x-topic-const}}} = "{{{vendorExtensions.x-topic-name}}}";
+
     public void {{operationId}}({{>returnTypes}} event) {
         {{operationId}}(event, null);
     }
@@ -60,7 +62,7 @@ public class {{classname}} {
     }
 
     public void {{operationId}}({{>returnTypes}} event, Object key, Map<String, Object> headers) {
-        send("{{{vendorExtensions.x-topic-name}}}", event, key, headers);
+        send({{{vendorExtensions.x-topic-const}}}, event, key, headers);
     }
     {{/contents}}
 {{/operation}}

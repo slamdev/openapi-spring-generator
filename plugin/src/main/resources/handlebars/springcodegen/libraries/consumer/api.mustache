@@ -18,7 +18,9 @@ public class {{classname}} {
     {{#contents}}
     public interface {{{vendorExtensions.x-topic-class}}} {
 
-        @KafkaListener(topics = "{{{vendorExtensions.x-topic-name}}}", autoStartup = "${spring.kafka.listener.auto-startup:true}")
+        String {{{vendorExtensions.x-topic-const}}} = "{{{vendorExtensions.x-topic-name}}}";
+
+        @KafkaListener(topics = {{{vendorExtensions.x-topic-const}}}, autoStartup = "${spring.kafka.listener.auto-startup:true}")
         default void {{operationId}}Ack(@Payload {{>returnTypes}} event, @Headers MessageHeaders headers) {
             {{operationId}}(event, headers);
             Acknowledgment acknowledgment = headers.get(KafkaHeaders.ACKNOWLEDGMENT, Acknowledgment.class);
