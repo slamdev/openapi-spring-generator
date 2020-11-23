@@ -279,7 +279,7 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
     @Override
     protected void addProducesInfo(ApiResponse response, CodegenOperation codegenOperation) {
         super.addProducesInfo(response, codegenOperation);
-        if (response == null || response.getContent() == null || response.getContent().isEmpty()) {
+        if (isStream() || response == null || response.getContent() == null || response.getContent().isEmpty()) {
             return;
         }
         boolean wildcard = response.getContent().keySet().stream().anyMatch("*/*"::equals);
