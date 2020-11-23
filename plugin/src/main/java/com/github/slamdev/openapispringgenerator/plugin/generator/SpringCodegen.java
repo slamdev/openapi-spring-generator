@@ -291,4 +291,20 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
             throw new IllegalArgumentException(message);
         }
     }
+
+    @Override
+    protected void addConsumesInfo(Operation operation, CodegenOperation codegenOperation, OpenAPI openAPI) {
+        super.addConsumesInfo(operation, codegenOperation, openAPI);
+        if (isStream() || operation.getRequestBody() == null) {
+            return;
+        }
+        boolean wildcard = operation.getRequestBody().getContent().keySet().stream().anyMatch("*/*"::equals);
+        if (wildcard) {
+            String message = String.format(
+                    "'%s (%s)' operation doesn't specify consumes media type or specify it as wildcard, spring does not support that",
+                    codegenOperation.path, codegenOperation.operationId
+            );
+            throw new IllegalArgumentException(message);
+        }
+    }
 }
