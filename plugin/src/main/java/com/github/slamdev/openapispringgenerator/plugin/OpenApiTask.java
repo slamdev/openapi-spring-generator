@@ -136,6 +136,7 @@ public class OpenApiTask extends DefaultTask {
             PercentageProgressFormatter progressFormatter = new PercentageProgressFormatter("Generating", specs.size());
             for (Spec spec : specs) {
                 progressLogger.progress(progressFormatter.getProgress());
+                getLogger().lifecycle("Generating '{}' spec for {}", spec.file.getFileName(), spec.getType());
                 new Generator().generate(spec.getFile(), spec.getType(), tempDir, useOptional);
 
                 FileTree javaTree = (FileTree) getProject().fileTree(tempDir).include("**/*.java");
