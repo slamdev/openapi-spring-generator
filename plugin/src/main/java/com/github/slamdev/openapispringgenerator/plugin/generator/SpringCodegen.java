@@ -6,6 +6,7 @@ import io.swagger.codegen.v3.generators.java.AbstractJavaCodegen;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.responses.ApiResponse;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -273,5 +274,21 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
         void setReturnType(String returnType);
 
         void setReturnContainer(String returnContainer);
+    }
+
+    @Override
+    protected void addProducesInfo(ApiResponse response, CodegenOperation codegenOperation) {
+        super.addProducesInfo(response, codegenOperation);
+        if (response == null || response.getContent() == null || response.getContent().isEmpty()) {
+            return;
+        }
+        boolean wildcard = response.getContent().keySet().stream().anyMatch("*/*"::equals);
+        if (wildcard) {
+            String message = String.format(
+                    "'%s (%s)' operation doesn't specify produces media type or specify it as wildcard, spring does not support that",
+                    codegenOperation.path, codegenOperation.operationId
+            );
+            throw new IllegalArgumentException(message);
+        }
     }
 }
