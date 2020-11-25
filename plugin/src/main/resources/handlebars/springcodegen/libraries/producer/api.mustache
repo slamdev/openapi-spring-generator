@@ -25,7 +25,7 @@ public class {{classname}} {
     private final KafkaOperations<String, Object> kafkaOperations;
     private final Duration timeout;
 
-    public {{classname}}(KafkaOperations<String, Object> kafkaOperations, @Value("${stream.{{classname}}.producer.timeout:${stream.producer.timeout:1s}}") Duration timeout) {
+    public {{classname}}(KafkaOperations<String, Object> kafkaOperations, @Value("${stream.{{classname}}.producer.timeout:${stream.producer.timeout:10s}}") Duration timeout) {
         this.kafkaOperations = kafkaOperations;
         this.timeout = timeout;
     }
