@@ -43,7 +43,7 @@ public class {{classname}} {
             SendResult<String, Object> result = future.get(timeout.getSeconds(), TimeUnit.SECONDS);
             log.trace("event is sent to {} topic with result: {}", topic, result);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            throw new org.apache.kafka.common.errors.TimeoutException("failed to wait for send confirmation from {{{vendorExtensions.x-topic-name}}}", e);
+            throw new IllegalStateException("failed to wait for send confirmation from " + topic, e);
         }
     }
 
