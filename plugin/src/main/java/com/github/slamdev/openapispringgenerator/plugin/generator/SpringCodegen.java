@@ -32,6 +32,11 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
     }
 
     @Override
+    protected void setTemplateEngine() {
+        templateEngine = new FormattedTemplateEngine(this);
+    }
+
+    @Override
     public void processOpts() {
         super.processOpts();
         apiTemplateFiles.put("api.mustache", ".java");
