@@ -6,6 +6,7 @@ import io.swagger.codegen.v3.generators.java.AbstractJavaCodegen;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import org.apache.commons.lang3.StringUtils;
 
@@ -120,9 +121,10 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
     }
 
     @Override
-    public void postProcessModelProperty(CodegenModel model, CodegenProperty property) {
-        super.postProcessModelProperty(model, property);
+    public CodegenModel fromModel(String name, Schema schema, Map<String, Schema> allSchemas) {
+        CodegenModel model = super.fromModel(name, schema, allSchemas);
         model.imports.remove("Schema");
+        return model;
     }
 
     @Override
