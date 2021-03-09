@@ -23,15 +23,21 @@ pluginBundle {
 }
 
 dependencies {
+    implementation 'com.google.guava:guava:30.1-jre'
     // TODO upgrade to support inheritance
-    implementation ('io.swagger.codegen.v3:swagger-codegen-generators:1.0.23') {
+    implementation ('io.swagger.codegen.v3:swagger-codegen-generators:1.0.25') {
         // NOTE: gradle manages slf4j implementation
         exclude module: 'logback-classic'
         exclude module: 'logback-core'
+        exclude module: 'guava'
     }
-    implementation ('org.openapitools:openapi-generator:5.0.0-beta2') {
+    implementation ('org.openapitools:openapi-generator:5.0.1') {
         exclude module: 'slf4j-simple'
+        exclude module: 'guava'
     }
-    implementation 'com.google.googlejavaformat:google-java-format:1.7'
-    testImplementation 'junit:junit:4.13.1'
+    // last version that works with java 8
+    implementation ('com.google.googlejavaformat:google-java-format:1.7') {
+        exclude module: 'guava'
+    }
+    testImplementation 'junit:junit:4.13.2'
 }
