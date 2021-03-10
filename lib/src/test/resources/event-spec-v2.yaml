@@ -1,0 +1,17 @@
+swagger: '2.0'
+info:
+  title: Testing
+  version: 1.0.0
+x-package-name: com.github.slamdev.openapispringgenerator.plugin.streams
+x-api-name-prefix: Testing
+paths:
+  /users:
+    post:
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/UserEvent"
+definitions:
+  UserEvent:
+    type: object

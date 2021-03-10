@@ -1,7 +1,10 @@
 package com.github.slamdev.openapispringgenerator.plugin;
 
-import com.github.slamdev.openapispringgenerator.plugin.generator.Generator;
-import com.github.slamdev.openapispringgenerator.plugin.validator.Validator;
+import com.github.slamdev.openapispringgenerator.lib.generator.SpringCodegen;
+import com.github.slamdev.openapispringgenerator.lib.validator.Validator;
+import io.swagger.codegen.v3.DefaultGenerator;
+import io.swagger.codegen.v3.config.CodegenConfigurator;
+import io.swagger.codegen.v3.generators.features.OptionalFeatures;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.FileTree;
@@ -49,42 +52,42 @@ public class OpenApiTask extends DefaultTask {
     }
 
     public void client(File file) {
-        specs.add(toSpec(Generator.Type.CLIENT, file));
+        specs.add(toSpec(SpringCodegen.Type.CLIENT, file));
     }
 
     public void client(FileCollection fileCollection) {
-        specs.addAll(toSpecs(Generator.Type.CLIENT, fileCollection));
+        specs.addAll(toSpecs(SpringCodegen.Type.CLIENT, fileCollection));
     }
 
     public void server(File file) {
-        specs.add(toSpec(Generator.Type.SERVER, file));
+        specs.add(toSpec(SpringCodegen.Type.SERVER, file));
     }
 
     public void server(FileCollection fileCollection) {
-        specs.addAll(toSpecs(Generator.Type.SERVER, fileCollection));
+        specs.addAll(toSpecs(SpringCodegen.Type.SERVER, fileCollection));
     }
 
     public void producer(File file) {
-        specs.add(toSpec(Generator.Type.PRODUCER, file));
+        specs.add(toSpec(SpringCodegen.Type.PRODUCER, file));
     }
 
     public void producer(FileCollection fileCollection) {
-        specs.addAll(toSpecs(Generator.Type.PRODUCER, fileCollection));
+        specs.addAll(toSpecs(SpringCodegen.Type.PRODUCER, fileCollection));
     }
 
     public void consumer(File file) {
-        specs.add(toSpec(Generator.Type.CONSUMER, file));
+        specs.add(toSpec(SpringCodegen.Type.CONSUMER, file));
     }
 
     public void consumer(FileCollection fileCollection) {
-        specs.addAll(toSpecs(Generator.Type.CONSUMER, fileCollection));
+        specs.addAll(toSpecs(SpringCodegen.Type.CONSUMER, fileCollection));
     }
 
-    private Spec toSpec(Generator.Type type, File file) {
+    private Spec toSpec(SpringCodegen.Type type, File file) {
         return new Spec(file.toPath(), type);
     }
 
-    private List<Spec> toSpecs(Generator.Type type, FileCollection fileCollection) {
+    private List<Spec> toSpecs(SpringCodegen.Type type, FileCollection fileCollection) {
         return fileCollection.getFiles().stream()
                 .map(File::toPath)
                 .map(f -> new Spec(f, type))
@@ -137,7 +140,7 @@ public class OpenApiTask extends DefaultTask {
             for (Spec spec : specs) {
                 progressLogger.progress(progressFormatter.getProgress());
                 getLogger().lifecycle("Generating '{}' spec for {}", spec.file.getFileName(), spec.getType());
-                new Generator().generate(spec.getFile(), spec.getType(), tempDir, useOptional);
+                generate(spec.getFile(), spec.getType(), tempDir, useOptional);
 
                 FileTree javaTree = (FileTree) getProject().fileTree(tempDir).include("**/*.java");
                 move(javaTree, "java", (src, dest) -> {
@@ -166,6 +169,23 @@ public class OpenApiTask extends DefaultTask {
         } finally {
             progressLogger.completed();
         }
+    }
+
+    private void generate(Path specFie, SpringCodegen.Type type, Path outputDir, boolean useOptional) {
+        CodegenConfigurator configurator = new CodegenConfigurator();
+        configurator.setLang(SpringCodegen.class.getName());
+        configurator.setLibrary(type.name().toLowerCase(Locale.ROOT));
+        configurator.setOutputDir(outputDir.toString());
+        configurator.addAdditionalProperty(OptionalFeatures.USE_OPTIONAL, useOptional);
+        try {
+            configurator.setInputSpec(new String(Files.readAllBytes(specFie)));
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        DefaultGenerator generator = new DefaultGenerator();
+        generator.opts(configurator.toClientOptInput());
+        generator.setGenerateSwaggerMetadata(false);
+        generator.generate();
     }
 
     private void clearDir(Path dir) throws IOException {
@@ -221,9 +241,9 @@ public class OpenApiTask extends DefaultTask {
 
     private static class Spec {
         private final Path file;
-        private final Generator.Type type;
+        private final SpringCodegen.Type type;
 
-        private Spec(Path file, Generator.Type type) {
+        private Spec(Path file, SpringCodegen.Type type) {
             this.file = file;
             this.type = type;
         }
@@ -232,7 +252,7 @@ public class OpenApiTask extends DefaultTask {
             return file;
         }
 
-        public Generator.Type getType() {
+        public SpringCodegen.Type getType() {
             return type;
         }
     }

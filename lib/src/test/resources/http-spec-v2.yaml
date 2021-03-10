@@ -1,0 +1,37 @@
+swagger: '2.0'
+info:
+  title: Testing
+  version: 1.0.0
+x-package-name: com.github.slamdev.openapispringgenerator.plugin.api
+x-api-name-prefix: Testing
+x-path-variable-name: server.url
+x-security-role: ROLE_USER
+basePath: "/api/testing"
+paths:
+  "/":
+    post:
+      operationId: exec
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - required: false
+          name: body
+          in: body
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/RequestDto"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/ResponseDto"
+definitions:
+  RequestDto:
+    type: object
+  ResponseDto:
+    type: object

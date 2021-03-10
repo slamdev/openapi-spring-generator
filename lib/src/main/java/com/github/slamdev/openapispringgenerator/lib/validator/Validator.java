@@ -1,4 +1,4 @@
-package com.github.slamdev.openapispringgenerator.plugin.validator;
+package com.github.slamdev.openapispringgenerator.lib.validator;
 
 import io.swagger.parser.OpenAPIParser;
 import io.swagger.v3.parser.core.models.ParseOptions;

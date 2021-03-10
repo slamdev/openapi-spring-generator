@@ -1,0 +1,20 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Testing
+x-package-name: com.github.slamdev.openapispringgenerator.plugin.streams
+x-api-name-prefix: Testing
+paths:
+  /users: # topic name
+    post: # can be anything
+      responses:
+        '200': # can be anything
+          description: OK
+          content:
+            application/json: # can be anything
+              schema:
+                $ref: '#/components/schemas/UserEvent'
+components:
+  schemas:
+    UserEvent:
+      type: object

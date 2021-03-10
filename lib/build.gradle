@@ -1,0 +1,27 @@
+plugins {
+    id 'java-library'
+    id 'pmd'
+    id 'checkstyle'
+    id 'com.github.spotbugs' version '4.6.0'
+}
+
+dependencies {
+    implementation 'com.google.guava:guava:30.1-jre'
+    // TODO upgrade to support inheritance
+    api('io.swagger.codegen.v3:swagger-codegen-generators:1.0.25') {
+        exclude group: 'io.swagger', module: 'swagger-codegen'
+        exclude module: 'guava'
+        exclude module: 'logback-classic'
+        exclude module: 'logback-core'
+    }
+    api('org.openapitools:openapi-generator:5.0.1') {
+        exclude module: 'guava'
+        exclude module: 'slf4j-simple'
+    }
+    // last version that works with java 8
+    implementation('com.google.googlejavaformat:google-java-format:1.7') {
+        exclude module: 'guava'
+    }
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.slf4j:slf4j-simple:1.7.30'
+}

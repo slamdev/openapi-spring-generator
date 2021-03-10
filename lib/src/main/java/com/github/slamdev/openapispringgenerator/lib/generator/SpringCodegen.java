@@ -1,4 +1,4 @@
-package com.github.slamdev.openapispringgenerator.plugin.generator;
+package com.github.slamdev.openapispringgenerator.lib.generator;
 
 import io.swagger.codegen.v3.*;
 import io.swagger.codegen.v3.generators.features.OptionalFeatures;
@@ -17,16 +17,20 @@ import java.util.Map;
 
 public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatures {
 
+    public enum Type {
+        SERVER, CLIENT, CONSUMER, PRODUCER
+    }
+
     private boolean useOptional;
 
     public SpringCodegen() {
         super();
         projectFolder = "";
         sourceFolder = "";
-        supportedLibraries.put("server", "RestController interface");
-        supportedLibraries.put("client", "RestTemplate client");
-        supportedLibraries.put("consumer", "StreamListener interface");
-        supportedLibraries.put("producer", "Stream client");
+        supportedLibraries.put(Type.SERVER.name().toLowerCase(Locale.ROOT), "RestController interface");
+        supportedLibraries.put(Type.CLIENT.name().toLowerCase(Locale.ROOT), "RestTemplate client");
+        supportedLibraries.put(Type.CONSUMER.name().toLowerCase(Locale.ROOT), "StreamListener interface");
+        supportedLibraries.put(Type.PRODUCER.name().toLowerCase(Locale.ROOT), "Stream client");
         additionalProperties.put(DATE_LIBRARY, "java8");
         additionalProperties.put(JAVA8_MODE, true);
     }

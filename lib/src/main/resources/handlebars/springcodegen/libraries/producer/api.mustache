@@ -1,0 +1,72 @@
+package {{package}};
+
+{{#imports}}import {{import}};
+{{/imports}}
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaOperations;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.kafka.support.SendResult;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.util.concurrent.ListenableFuture;
+
+import java.time.Duration;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+{{#operations}}
+@Slf4j
+public class {{classname}} {
+
+    private final KafkaOperations<String, Object> kafkaOperations;
+    private final Duration timeout;
+
+    public {{classname}}(KafkaOperations<String, Object> kafkaOperations, @Value("${stream.{{classname}}.producer.timeout:${stream.producer.timeout:10s}}") Duration timeout) {
+        this.kafkaOperations = kafkaOperations;
+        this.timeout = timeout;
+    }
+
+    private void send(String topic, Object event, String key, Map<String, Object> headers) {
+        Message<Object> message = MessageBuilder
+                .withPayload(event)
+                .copyHeaders(headers)
+                .setHeaderIfAbsent(KafkaHeaders.TOPIC, topic)
+                .setHeaderIfAbsent(KafkaHeaders.MESSAGE_KEY, key)
+                .build();
+        log.debug("sending message to '{}' topic: '{}'", topic, message);
+        ListenableFuture<SendResult<String, Object>> future = kafkaOperations.send(message);
+        try {
+            SendResult<String, Object> result = future.get(timeout.getSeconds(), TimeUnit.SECONDS);
+            log.trace("event is sent to {} topic with result: {}", topic, result);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new IllegalStateException("failed to wait for send confirmation from " + topic, e);
+        }
+    }
+
+{{#operation}}
+    {{#contents}}
+    public static final String {{{vendorExtensions.x-topic-const}}} = "{{{vendorExtensions.x-topic-name}}}";
+
+    public void {{operationId}}({{>returnTypes}} event) {
+        {{operationId}}(event, Collections.emptyMap());
+    }
+
+    public void {{operationId}}({{>returnTypes}} event, String key) {
+        {{operationId}}(event, key, Collections.emptyMap());
+    }
+
+    public void {{operationId}}({{>returnTypes}} event, Map<String, Object> headers) {
+        {{operationId}}(event, null, headers);
+    }
+
+    public void {{operationId}}({{>returnTypes}} event, String key, Map<String, Object> headers) {
+        send({{{vendorExtensions.x-topic-const}}}, event, key, headers);
+    }
+    {{/contents}}
+{{/operation}}
+}
+{{/operations}}

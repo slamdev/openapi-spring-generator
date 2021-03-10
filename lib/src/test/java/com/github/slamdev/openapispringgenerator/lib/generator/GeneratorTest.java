@@ -1,31 +1,32 @@
-package com.github.slamdev.openapispringgenerator.plugin.generator;
+package com.github.slamdev.openapispringgenerator.lib.generator;
 
-import io.swagger.codegen.v3.ClientOptInput;
 import io.swagger.codegen.v3.DefaultGenerator;
 import io.swagger.codegen.v3.config.CodegenConfigurator;
 import io.swagger.codegen.v3.generators.features.OptionalFeatures;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Locale;
+import java.nio.file.Paths;
 
-public class Generator {
+public class GeneratorTest {
 
-    public enum Type {
-        SERVER, CLIENT, CONSUMER, PRODUCER
+    @Test
+    public void should_generate() {
+        generate(file("event-spec-v3.yaml"), "consumer", Paths.get("build/test-output"), true);
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Generator.class);
+    private Path file(String name) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        return new File(classLoader.getResource(name).getFile()).toPath();
+    }
 
-    public void generate(Path specFie, Type type, Path outputDir, boolean useOptional) {
-        LOGGER.info("generating {} code for {} in {}", type, specFie, outputDir);
-
+    private void generate(Path specFie, String type, Path outputDir, boolean useOptional) {
         CodegenConfigurator configurator = new CodegenConfigurator();
         configurator.setLang(SpringCodegen.class.getName());
-        configurator.setLibrary(type.name().toLowerCase(Locale.ROOT));
+        configurator.setLibrary(type);
         configurator.setOutputDir(outputDir.toString());
         configurator.addAdditionalProperty(OptionalFeatures.USE_OPTIONAL, useOptional);
         try {
@@ -33,10 +34,8 @@ public class Generator {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-        ClientOptInput input = configurator.toClientOptInput();
-
         DefaultGenerator generator = new DefaultGenerator();
-        generator.opts(input);
+        generator.opts(configurator.toClientOptInput());
         generator.setGenerateSwaggerMetadata(false);
         generator.generate();
     }
