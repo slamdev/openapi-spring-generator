@@ -5,6 +5,7 @@ plugins {
     id 'pmd'
     id 'checkstyle'
     id 'com.github.spotbugs' version '4.6.0'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 gradlePlugin {
@@ -23,10 +24,50 @@ pluginBundle {
 }
 
 dependencies {
+    shadow gradleApi()
     implementation(project(':lib')) {
         // NOTE: gradle manages slf4j implementation
         exclude module: 'logback-classic'
         exclude module: 'logback-core'
     }
     testImplementation 'junit:junit:4.13.2'
+}
+
+configurations.named(JavaPlugin.API_CONFIGURATION_NAME) {
+    dependencies.remove(project.dependencies.gradleApi())
+}
+
+shadowJar {
+    archiveClassifier.set('')
+    mergeServiceFiles()
+    minimize {
+        exclude dependency('io.swagger.parser.v3:.*:.*')
+        exclude dependency('org.slf4j:.*:.*')
+    }
+    exclude '/arguments/**/*'
+    exclude '/mustache/**/*'
+    exclude 'META-INF/services/io.swagger.codegen.v3.CodegenConfig'
+    exclude 'META-INF/maven/**/*'
+}
+
+configurations.archives.artifacts.clear()
+artifacts {
+    archives tasks.shadowJar
+}
+
+task relocateShadowJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation) {
+    target = tasks.shadowJar
+}
+
+tasks.shadowJar.dependsOn tasks.relocateShadowJar
+
+publishing {
+    publications {
+        pluginMaven(MavenPublication) {
+            project.shadow.component(it)
+            pom.withXml {
+                asNode().get('dependencies').each { it.children().clear() }
+            }
+        }
+    }
 }

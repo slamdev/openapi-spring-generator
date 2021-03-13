@@ -23,8 +23,4 @@ jobs:
       - uses: eskatos/gradle-command-action@v1
         with:
           dependencies-cache-enabled: true
-          arguments: :plugin:build
-      - uses: eskatos/gradle-command-action@v1
-        with:
-          dependencies-cache-enabled: true
-          arguments: build
+          arguments: build -x :plugin:build
