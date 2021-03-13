@@ -19,7 +19,13 @@ jar {
     }
 }
 
+configurations.archives.artifacts.clear()
+artifacts {
+    archives tasks.shadowJar
+}
+
 shadowJar {
+    archiveClassifier.set('')
     mergeServiceFiles()
     minimize {
         exclude dependency('io.swagger.parser.v3:.*:.*')
