@@ -19,9 +19,6 @@ public class FormattedTemplateEngine extends HandlebarTemplateEngine {
     @Override
     public String getRendered(String templateFile, Map<String, Object> templateData) throws IOException {
         String content = super.getRendered(templateFile, templateData);
-        if (!templateFile.endsWith(".java")) {
-            return content;
-        }
         try {
             return formatter.formatSource(content);
         } catch (FormatterException e) {
