@@ -29,6 +29,8 @@ dependencies {
         // NOTE: gradle manages slf4j implementation
         exclude module: 'logback-classic'
         exclude module: 'logback-core'
+        exclude module: 'slf4j-api'
+        exclude module: 'slf4j-ext'
     }
     testImplementation 'junit:junit:4.13.2'
 }
@@ -40,10 +42,10 @@ configurations.named(JavaPlugin.API_CONFIGURATION_NAME) {
 shadowJar {
     archiveClassifier.set('')
     mergeServiceFiles()
-    minimize {
-        exclude dependency('io.swagger.parser.v3:.*:.*')
-        exclude dependency('org.slf4j:.*:.*')
-    }
+//    minimize {
+//        exclude dependency('io.swagger.parser.v3:.*:.*')
+//        exclude dependency('org.slf4j:.*:.*')
+//    }
     exclude '/arguments/**/*'
     exclude '/mustache/**/*'
     exclude 'META-INF/services/io.swagger.codegen.v3.CodegenConfig'

@@ -121,16 +121,20 @@ public class OpenApiTask extends DefaultTask {
 
         ProgressLogger progressLogger = progressLoggerFactory.newOperation(OpenApiTask.class);
         progressLogger.start("OpenApi spec validation", null);
+        boolean failed = false;
         try {
             for (Spec spec : specs) {
-                getLogger().lifecycle("Validating '{}' spec for {}", spec.file.getFileName(), spec.getType());
+                progressLogger.progress("Validating '" + spec.file.getFileName() + "' spec for " + spec.getType());
                 List<Invalid> results = new Validator().validate(spec.file);
+                if (!results.isEmpty()) {
+                    failed = true;
+                }
                 for (Invalid result : results) {
-                    getLogger().warn("{}: {}", result.getRule().getSeverity(), result.getMessage());
+                    getLogger().error("{}: {}", result.getRule().getSeverity(), result.getMessage());
                 }
             }
         } finally {
-            progressLogger.completed();
+            progressLogger.completed("Validation completed", failed);
         }
 
         progressLogger = progressLoggerFactory.newOperation(OpenApiTask.class);
@@ -139,7 +143,7 @@ public class OpenApiTask extends DefaultTask {
             PercentageProgressFormatter progressFormatter = new PercentageProgressFormatter("Generating", specs.size());
             for (Spec spec : specs) {
                 progressLogger.progress(progressFormatter.getProgress());
-                getLogger().lifecycle("Generating '{}' spec for {}", spec.file.getFileName(), spec.getType());
+                progressLogger.progress("Generating '" + spec.file.getFileName() + "' spec for " + spec.getType());
                 generate(spec.getFile(), spec.getType(), tempDir, useOptional);
 
                 FileTree javaTree = (FileTree) getProject().fileTree(tempDir).include("**/*.java");
@@ -167,7 +171,7 @@ public class OpenApiTask extends DefaultTask {
                 progressFormatter.increment();
             }
         } finally {
-            progressLogger.completed();
+            progressLogger.completed("Generation completed", false);
         }
     }
 
