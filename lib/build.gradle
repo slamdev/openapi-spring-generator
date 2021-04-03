@@ -14,7 +14,7 @@ dependencies {
         exclude module: 'logback-classic'
         exclude module: 'logback-core'
     }
-    api('org.openapitools:openapi-generator:5.0.1') {
+    api('org.openapitools:openapi-generator:5.1.0') {
         exclude module: 'guava'
         exclude module: 'slf4j-simple'
     }
