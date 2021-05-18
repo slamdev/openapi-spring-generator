@@ -36,6 +36,7 @@ import org.springframework.util.StringUtils;
 
     private final RestTemplate restTemplate;
 
+    @SuppressWarnings("unchecked")
     public {{classname}}(RestTemplateBuilder builder, ListableBeanFactory factory, {{=<% %>=}}@Value("${<%vendorExtensions.x-path-variable-name%>}")<%={{ }}=%> String url) {
         List<Function<RestTemplateBuilder, RestTemplateBuilder>> builderCustomizers = factory.getBeansOfType(Function.class).entrySet().stream()
             .filter(e -> BeanFactoryAnnotationUtils.isQualifierMatch(s -> REST_API_QUALIFIER.equals(s) || MODULE_SPECIFIC_QUALIFIER.equals(s), e.getKey(), factory))
