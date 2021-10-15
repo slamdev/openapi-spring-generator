@@ -4,7 +4,7 @@ plugins {
     id 'pmd'
     id 'checkstyle'
     id 'com.github.spotbugs' version '4.6.0'
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
 }
 
 dependencies {
@@ -30,6 +30,7 @@ shadowJar {
     minimize {
         exclude dependency('io.swagger.parser.v3:.*:.*')
         exclude dependency('org.slf4j:.*:.*')
+        exclude dependency('com.google.errorprone:.*:.*')
     }
     exclude '/arguments/**/*'
     exclude '/mustache/**/*'

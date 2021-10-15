@@ -21,7 +21,7 @@ subprojects {
             options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation' << '-Werror'
         }
         repositories {
-            jcenter()
+            mavenCentral()
         }
     }
 
