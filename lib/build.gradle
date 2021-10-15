@@ -6,15 +6,17 @@ plugins {
 }
 
 dependencies {
-    implementation 'com.google.guava:guava:30.1-jre'
+    implementation 'com.google.guava:guava:31.0.1-jre'
+    // override to support https://github.com/jknack/handlebars.java/pull/893/files
+    runtimeOnly 'com.github.jknack:handlebars:4.3.0'
     // TODO upgrade to support inheritance
-    api('io.swagger.codegen.v3:swagger-codegen-generators:1.0.25') {
+    api('io.swagger.codegen.v3:swagger-codegen-generators:1.0.29') {
         exclude group: 'io.swagger', module: 'swagger-codegen'
         exclude module: 'guava'
         exclude module: 'logback-classic'
         exclude module: 'logback-core'
     }
-    api('org.openapitools:openapi-generator:5.1.0') {
+    api('org.openapitools:openapi-generator:5.2.1') {
         exclude module: 'guava'
         exclude module: 'slf4j-simple'
     }
@@ -23,5 +25,5 @@ dependencies {
         exclude module: 'guava'
     }
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.slf4j:slf4j-simple:1.7.30'
+    testImplementation 'org.slf4j:slf4j-simple:1.7.32'
 }
