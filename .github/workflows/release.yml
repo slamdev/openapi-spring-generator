@@ -37,7 +37,7 @@ jobs:
         with:
           dependencies-cache-enabled: true
           arguments: :cli:publish
-      - run: ls -la cli/build/libs/
+      - run: mv cli/build/libs/cli-*.jar cli/build/libs/cli.jar
       - uses: softprops/action-gh-release@v1
         with:
           files: cli/build/libs/cli.jar
