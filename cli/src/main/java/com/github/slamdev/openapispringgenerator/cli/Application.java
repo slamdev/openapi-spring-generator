@@ -2,7 +2,7 @@ package com.github.slamdev.openapispringgenerator.cli;
 
 import picocli.CommandLine;
 
-@CommandLine.Command(subcommands = {Generate.class, Validate.class})
+@CommandLine.Command(subcommands = {Generate.class, Validate.class, Convert.class})
 public class Application {
 
     public static void main(String[] args) {

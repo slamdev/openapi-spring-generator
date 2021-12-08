@@ -10,13 +10,13 @@ dependencies {
     // override to support https://github.com/jknack/handlebars.java/pull/893/files
     runtimeOnly 'com.github.jknack:handlebars:4.3.0'
     // TODO upgrade to support inheritance
-    api('io.swagger.codegen.v3:swagger-codegen-generators:1.0.29') {
+    api('io.swagger.codegen.v3:swagger-codegen-generators:1.0.30') {
         exclude group: 'io.swagger', module: 'swagger-codegen'
         exclude module: 'guava'
         exclude module: 'logback-classic'
         exclude module: 'logback-core'
     }
-    api('org.openapitools:openapi-generator:5.2.1') {
+    api('org.openapitools:openapi-generator:5.3.0') {
         exclude module: 'guava'
         exclude module: 'slf4j-simple'
     }
