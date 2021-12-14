@@ -26,7 +26,7 @@ public class {{classname}} {
         String {{{vendorExtensions.x-topic-const}}} = "{{{vendorExtensions.x-topic-name}}}";
 
         @KafkaListener(topics = {{{vendorExtensions.x-topic-const}}},
-                       autoStartup = "${spring.kafka.listener.auto-startup:true}",
+                       autoStartup = "${spring.kafka.listener.{{{vendorExtensions.x-topic-name}}}.auto-startup:${spring.kafka.listener.auto-startup:true}}",
                        properties = {
                          "spring.json.value.default.type={{package}}.{{>returnTypes}}",
                          "spring.json.type.mapping=event:{{package}}.{{>returnTypes}}",
