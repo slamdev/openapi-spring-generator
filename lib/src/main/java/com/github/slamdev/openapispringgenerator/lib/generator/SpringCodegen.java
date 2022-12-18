@@ -45,7 +45,7 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
         super.processOpts();
         apiTemplateFiles.put("api.mustache", ".java");
         if (Arrays.asList("client", "producer").contains(getLibrary())) {
-            supportingFiles.add(new SupportingFile("spring.factories.mustache", "META-INF", "spring.factories"));
+            supportingFiles.add(new SupportingFile("org.springframework.boot.autoconfigure.AutoConfiguration.imports.mustache", "META-INF/spring", "org.springframework.boot.autoconfigure.AutoConfiguration.imports"));
         }
         modelTemplateFiles.put("model.mustache", ".java");
         modelDocTemplateFiles.remove("model_doc.mustache");
@@ -151,6 +151,9 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
     @Override
     public void preprocessOpenAPI(OpenAPI openAPI) {
         super.preprocessOpenAPI(openAPI);
+        if (openAPI.getPaths().isEmpty()) {
+            supportingFiles.removeIf(f -> "org.springframework.boot.autoconfigure.AutoConfiguration.imports.mustache".equals(f.templateFile));
+        }
         if (!isStream()) {
             return;
         }

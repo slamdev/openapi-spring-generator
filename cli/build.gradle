@@ -3,13 +3,13 @@ plugins {
     id 'maven-publish'
     id 'pmd'
     id 'checkstyle'
-    id 'com.github.spotbugs' version '4.6.0'
-    id 'com.github.johnrengelman.shadow' version '7.1.0'
+    id 'com.github.spotbugs' version '5.0.13'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 dependencies {
-    implementation 'org.slf4j:slf4j-simple:1.7.32'
-    implementation 'info.picocli:picocli:4.6.1'
+    implementation 'org.slf4j:slf4j-simple:1.7.36'
+    implementation 'info.picocli:picocli:4.7.0'
     implementation project(':lib')
 }
 

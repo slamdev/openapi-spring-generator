@@ -27,7 +27,7 @@ subprojects {
 
     plugins.withId('pmd') {
         pmd {
-            toolVersion = '6.29.0'
+            toolVersion = '6.50.0'
             ignoreFailures = false
             consoleOutput = false
         }
@@ -47,7 +47,7 @@ subprojects {
 
     plugins.withId('checkstyle') {
         checkstyle {
-            toolVersion = '8.37'
+            toolVersion = '10.3.4'
             ignoreFailures = false
             showViolations = false
         }
@@ -62,14 +62,14 @@ subprojects {
             exclude '**/stream/**'
         }
         dependencies {
-            checkstyle 'com.thomasjensen.checkstyle.addons:checkstyle-addons:6.0.1'
-            checkstyle 'com.github.sevntu-checkstyle:sevntu-checks:1.38.0'
+            checkstyle 'com.thomasjensen.checkstyle.addons:checkstyle-addons:7.0.1'
+            checkstyle 'com.github.sevntu-checkstyle:sevntu-checks:1.43.0'
         }
     }
 
     plugins.withId('com.github.spotbugs') {
         spotbugs {
-            toolVersion = '4.1.4'
+            toolVersion = '4.7.2'
             ignoreFailures = false
             effort = 'max'
             reportLevel = 'low'

@@ -49,6 +49,7 @@
         <exclude name="UseObjectForClearerAPI"/>
         <exclude name="NPathComplexity"/>
         <exclude name="GodClass"/>
+        <exclude name="CognitiveComplexity"/>
     </rule>
     <rule ref="category/java/documentation.xml">
         <exclude name="CommentRequired"/>
