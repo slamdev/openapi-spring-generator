@@ -9,11 +9,11 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.util.concurrent.ListenableFuture;
 
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -35,10 +35,10 @@ public class {{classname}} {
                 .withPayload(event)
                 .copyHeaders(headers)
                 .setHeaderIfAbsent(KafkaHeaders.TOPIC, topic)
-                .setHeaderIfAbsent(KafkaHeaders.MESSAGE_KEY, key)
+                .setHeaderIfAbsent(KafkaHeaders.KEY, key)
                 .build();
         log.debug("sending message to '{}' topic: '{}'", topic, message);
-        ListenableFuture<SendResult<String, Object>> future = kafkaOperations.send(message);
+        CompletableFuture<SendResult<String, Object>> future = kafkaOperations.send(message);
         try {
             SendResult<String, Object> result = future.get(timeout.getSeconds(), TimeUnit.SECONDS);
             log.trace("event is sent to {} topic with result: {}", topic, result);

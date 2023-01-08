@@ -15,11 +15,8 @@ import org.gradle.internal.progress.PercentageProgressFormatter;
 import org.openapitools.codegen.validation.Invalid;
 
 import javax.inject.Inject;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -162,7 +159,7 @@ public class OpenApiTask extends DefaultTask {
 
                 FileTree resourcesTree = (FileTree) getProject().fileTree(tempDir).exclude("**/*.java");
                 move(resourcesTree, "resources", (src, dest) -> {
-                    if (!"spring.factories".equals(src.getFileName().toString())) {
+                    if (!"org.springframework.boot.autoconfigure.AutoConfiguration.imports".equals(src.getFileName().toString())) {
                         throw new IllegalStateException("" + dest + " already exists");
                     }
                     mergeSpringFactories(src, dest);
@@ -202,25 +199,9 @@ public class OpenApiTask extends DefaultTask {
     }
 
     private void mergeSpringFactories(Path src, Path dest) {
-        try (BufferedReader srcReader = Files.newBufferedReader(src); BufferedReader destReader = Files.newBufferedReader(dest)) {
-            Properties srcProps = new Properties();
-            srcProps.load(srcReader);
-
-            Properties destProps = new Properties();
-            destProps.load(destReader);
-
-            for (String key : srcProps.stringPropertyNames()) {
-                if (destProps.containsKey(key)) {
-                    String merged = destProps.getProperty(key) + "," + srcProps.getProperty(key);
-                    destProps.put(key, merged);
-                } else {
-                    destProps.put(key, srcProps.getProperty(key));
-                }
-            }
-
-            try (BufferedWriter writer = Files.newBufferedWriter(dest, StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING)) {
-                destProps.store(writer, null);
-            }
+        try {
+            byte[] srcContent = Files.readAllBytes(src);
+            Files.write(dest, srcContent, StandardOpenOption.APPEND);
             Files.delete(src);
         } catch (IOException e) {
             throw new IllegalStateException(e);
