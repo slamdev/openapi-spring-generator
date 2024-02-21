@@ -14,8 +14,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatures {
+
+    private static final Set<String> INHERITANCE_EXCLUDED_TYPES = Set.of(
+            "HashMap"
+    );
 
     public enum Type {
         SERVER, CLIENT, CONSUMER, PRODUCER
@@ -140,12 +145,23 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
     protected void postProcessAllCodegenModels(Map<String, CodegenModel> allModels) {
         super.postProcessAllCodegenModels(allModels);
         allModels.forEach((k, model) -> {
-            if (model.getParent() == null && (model.getChildren() == null || model.getChildren().isEmpty())) {
-                model.getVendorExtensions().put("x-inheritance", false);
-            } else {
+            if (useInheritance(model)) {
                 model.getVendorExtensions().put("x-inheritance", true);
+            } else {
+                model.getVendorExtensions().put("x-inheritance", false);
             }
         });
+    }
+
+    private static boolean useInheritance(CodegenModel model) {
+        boolean allowInheritance = true;
+        if (model.getParent() != null) {
+            String parentType = model.getParent().replaceAll("<.*>", "");
+            allowInheritance = !INHERITANCE_EXCLUDED_TYPES.contains(parentType);
+        }
+        boolean haveParent = model.getParent() != null && allowInheritance;
+        boolean haveChildren = model.getChildren() != null && !model.getChildren().isEmpty();
+        return haveParent || haveChildren;
     }
 
     @Override
