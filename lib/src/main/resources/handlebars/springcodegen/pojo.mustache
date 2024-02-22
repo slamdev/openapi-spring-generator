@@ -1,7 +1,7 @@
 {{#discriminator}}{{>typeInfoAnnotation}}{{/discriminator}}
 
 @Data
-{{#vendorExtensions.x-inheritance}}@SuperBuilder{{/vendorExtensions.x-inheritance}}
+{{#vendorExtensions.x-inheritance}}{{^isContainer}}@SuperBuilder{{/isContainer}}{{/vendorExtensions.x-inheritance}}
 {{^vendorExtensions.x-inheritance}}@Builder{{/vendorExtensions.x-inheritance}}
 {{#parent}}@EqualsAndHashCode(callSuper=true){{/parent}}
 @AllArgsConstructor
