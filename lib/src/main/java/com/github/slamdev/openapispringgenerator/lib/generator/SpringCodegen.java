@@ -181,6 +181,9 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
                 if (vendorExtensions.containsKey("x-path-variable-name")) {
                     operation.vendorExtensions.putIfAbsent("x-path-variable-name", vendorExtensions.get("x-path-variable-name"));
                 }
+                if (vendorExtensions.containsKey("x-entity")) {
+                    operation.vendorExtensions.putIfAbsent("x-entity", vendorExtensions.get("x-entity"));
+                }
                 List<CodegenResponse> responses = operation.responses;
                 if (responses != null) {
                     for (final CodegenResponse resp : responses) {

@@ -19,6 +19,9 @@ import org.springframework.core.io.Resource;
 public interface {{classname}} {
 
 {{#operation}}
+    {{#vendorExtensions.x-entity}}
+    @ch.audienzz.lib.runtime.deps.KeyEntity(value = "{{vendorExtensions.x-entity}}")
+    {{/vendorExtensions.x-entity}}
     {{#contents}}
     @RequestMapping(
             value = "{{{path}}}",{{#hasProduces}}
