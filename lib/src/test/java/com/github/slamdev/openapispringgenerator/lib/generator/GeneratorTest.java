@@ -18,6 +18,11 @@ public class GeneratorTest {
         generate(file("event-spec-v3.yaml"), "consumer", Paths.get("build/test-output"), true);
     }
 
+    @Test
+    public void should_generate_list_with_singular_name() {
+        generate(file("event-spec-v2.yaml"), "server", Paths.get("build/test-output"), true);
+    }
+
     private Path file(String name) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         return new File(classLoader.getResource(name).getFile()).toPath();
