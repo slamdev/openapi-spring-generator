@@ -149,6 +149,15 @@ public class SpringCodegen extends AbstractJavaCodegen implements OptionalFeatur
     }
 
     @Override
+    public void postProcessModelProperty(CodegenModel model, CodegenProperty property) {
+        super.postProcessModelProperty(model, property);
+        Boolean skipSingular = (Boolean) property.vendorExtensions.get("x-skipSingular");
+        if (Boolean.TRUE.equals(skipSingular)) {
+            property.vendorExtensions.put("skipSingular", true);
+        }
+    }
+
+    @Override
     public void preprocessOpenAPI(OpenAPI openAPI) {
         super.preprocessOpenAPI(openAPI);
         if (openAPI.getPaths().isEmpty()) {

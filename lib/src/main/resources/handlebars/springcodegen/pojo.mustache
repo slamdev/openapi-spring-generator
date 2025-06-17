@@ -30,7 +30,11 @@ public class {{classname}} {{#parent}}extends {{{parent}}}{{/parent}} implements
   @JsonProperty("{{baseName}}"){{#withXml}}
   @JacksonXmlProperty({{#isXmlAttribute}}isAttribute = true, {{/isXmlAttribute}}{{#xmlNamespace}}namespace="{{xmlNamespace}}", {{/xmlNamespace}}localName = "{{#xmlName}}{{xmlName}}{{/xmlName}}{{^xmlName}}{{baseName}}{{/xmlName}}"){{/withXml}}
     {{/vendorExtensions.x-is-discriminator-property}}
-  {{#isListContainer}}@Singular{{/isListContainer}}
+    {{#isListContainer}}
+        {{^vendorExtensions.skipSingular}}
+            @Singular
+        {{/vendorExtensions.skipSingular}}
+    {{/isListContainer}}
   {{^isContainer}}@Builder.Default{{/isContainer}}
   private {{{datatypeWithEnum}}} {{name}}{{^isContainer}} = {{{defaultValue}}}{{/isContainer}};
 
