@@ -20,7 +20,7 @@ public class GeneratorTest {
 
     @Test
     public void should_generate_list_with_singular_name() {
-        generate(file("event-spec-v2.yaml"), "server", Paths.get("build/test-output"), true);
+        generate(file("http-spec-v2.yaml"), "server", Paths.get("build/test-output"), true);
     }
 
     private Path file(String name) {

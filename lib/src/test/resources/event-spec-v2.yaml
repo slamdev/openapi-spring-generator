@@ -12,22 +12,6 @@ paths:
           description: OK
           schema:
             "$ref": "#/definitions/UserEvent"
-  /users/list:
-    post:
-      responses:
-        '200':
-          description: OK
-          schema:
-            "$ref": "#/definitions/UserRequest"
 definitions:
   UserEvent:
     type: object
-  UserRequest:
-    type: object
-    properties:
-      output:
-        type: array
-        items:
-          type: string
-        x-skipSingular: true
-

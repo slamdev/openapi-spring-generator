@@ -30,8 +30,25 @@ paths:
             type: array
             items:
               "$ref": "#/definitions/ResponseDto"
+  /users/list:
+    post:
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/UserRequest"
 definitions:
   RequestDto:
     type: object
   ResponseDto:
     type: object
+  UserRequest:
+    type: object
+    properties:
+      output:
+        type: array
+        items:
+          type: string
+        x-skipSingular: true
